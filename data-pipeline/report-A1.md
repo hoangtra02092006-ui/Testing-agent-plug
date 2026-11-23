@@ -28,6 +28,7 @@ a1:a:determiner, a1:after:preposition, a1:all:determiner, a1:all:pronoun, a1:als
 - action: "there were stories of murders and other unnatural actions"
 - after: "We had a few beers after the game."
 - also: "Also common are languages, like Latin, with a three-way distinction (proximal, medial and distal)."
+- also: "When you withdraw yor forces, we shall also withdraw ours."
 - bar: "he drowned his sorrows in whiskey at the bar"
 - bottle: "Beer is often sold in bottles."
 - cold: "a cold beer"

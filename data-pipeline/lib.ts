@@ -190,6 +190,7 @@ const EXCLUDED_EXAMPLES = new Set([
   'smoking stinks',
   'This man killed several people when he tried to rob a bank',
   'Also common are languages, like Latin, with a three-way distinction (proximal, medial and distal).', // grammar jargon
+  'When you withdraw yor forces, we shall also withdraw ours.', // spelling mistake
 ]);
 
 /**
