@@ -1,3 +1,4 @@
+import { AppError } from '../domain/errors';
 import { CARD_STATES, RATINGS, type Card, type ReviewLog, type Word } from '../domain/types';
 import type { Scheduler } from '../domain/scheduler';
 import type { SettingRow, VocabularyDb } from './db';
@@ -42,10 +43,10 @@ export function parseBackup(json: string, scheduler: Pick<Scheduler, 'isValidCar
   try {
     raw = JSON.parse(json);
   } catch {
-    throw new Error('Backup file is not valid JSON.');
+    throw new AppError('backupNotJson', 'Backup file is not valid JSON.');
   }
   if (!isRecord(raw) || raw.app !== 'vocabulary-trainer') {
-    throw new Error('This file is not a vocabulary trainer backup.');
+    throw new AppError('backupWrongApp', 'This file is not a vocabulary trainer backup.');
   }
   const version = raw.schemaVersion;
   if (
@@ -54,7 +55,9 @@ export function parseBackup(json: string, scheduler: Pick<Scheduler, 'isValidCar
     version < 1 ||
     version > BACKUP_VERSION
   ) {
-    throw new Error(`Unsupported backup version ${String(version)}.`);
+    throw new AppError('backupVersion', `Unsupported backup version ${String(version)}.`, {
+      version: String(version),
+    });
   }
   const backup: BackupFile = {
     app: 'vocabulary-trainer',
@@ -90,7 +93,11 @@ function unique(keys: string[], listName: string, field: string): void {
   const seen = new Set<string>();
   keys.forEach((key, i) => {
     if (seen.has(key))
-      throw new Error(`Invalid backup: ${listName}[${i}].${field} "${key}" is duplicated.`);
+      throw new AppError(
+        'backupDuplicate',
+        `Invalid backup: ${listName}[${i}].${field} "${key}" is duplicated.`,
+        { where: `${listName}[${i}].${field}` },
+      );
     seen.add(key);
   });
 }
@@ -113,7 +120,8 @@ export async function importBackup(db: VocabularyDb, backup: BackupFile): Promis
 
 function list(raw: Record<string, unknown>, key: string): unknown[] {
   const value = raw[key];
-  if (!Array.isArray(value)) throw new Error(`Backup is missing "${key}".`);
+  if (!Array.isArray(value))
+    throw new AppError('backupMissingList', `Backup is missing "${key}".`, { key });
   return value;
 }
 
@@ -167,7 +175,8 @@ function parseSetting(item: unknown, where: string): SettingRow {
 }
 
 function record(item: unknown, where: string): Record<string, unknown> {
-  if (!isRecord(item)) throw new Error(`Invalid backup: ${where} is not an object.`);
+  if (!isRecord(item))
+    throw new AppError('backupInvalid', `Invalid backup: ${where} is not an object.`, { where });
   return item;
 }
 
@@ -194,7 +203,9 @@ function count(value: unknown, where: string, field: string): number {
 }
 
 function fail(where: string, field: string): never {
-  throw new Error(`Invalid backup: ${where}.${field} is missing or invalid.`);
+  throw new AppError('backupInvalid', `Invalid backup: ${where}.${field} is missing or invalid.`, {
+    where: `${where}.${field}`,
+  });
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

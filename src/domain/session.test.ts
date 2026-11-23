@@ -1,5 +1,13 @@
 import { FsrsScheduler } from './scheduler';
-import { advanceQueue, buildSession, countNewWordsIntroducedToday } from './session';
+import {
+  advanceQueue,
+  buildSession,
+  countNewWordsIntroducedToday,
+  isInTodaysQueue,
+  levelOfWordId,
+  levelsToLoad,
+  planToday,
+} from './session';
 import type { Card, ReviewLog } from './types';
 
 const NOW = new Date('2026-01-10T08:00:00Z');
@@ -119,5 +127,51 @@ describe('advanceQueue', () => {
 
   it('removes only the first occurrence', () => {
     expect(advanceQueue(['a', 'b', 'a'], 'a', 'easy')).toEqual(['b', 'a']);
+  });
+});
+
+describe('levelOfWordId / levelsToLoad', () => {
+  it('reads the level from the word id', () => {
+    expect(levelOfWordId('a1:cat:noun')).toBe('A1');
+    expect(levelOfWordId('custom:123')).toBeUndefined();
+  });
+
+  it('loads the chosen level and levels already studied, only when published', () => {
+    const cards = [
+      card('b1:x:noun', '2026-01-01'),
+      card('a1:y:noun', '2026-01-01'),
+      card('custom:1', '2026-01-01'),
+    ];
+    expect(levelsToLoad('A2', cards, ['A1', 'A2'])).toEqual(['A2', 'A1']);
+    expect(levelsToLoad('C1', [], ['A1'])).toEqual([]);
+  });
+});
+
+describe('planToday', () => {
+  it('leaves out cards without word data and counts new words met today', () => {
+    const cards = [
+      card('a1:gone:noun', '2026-01-09T08:00:00Z'),
+      card('a1:due:noun', '2026-01-09T08:00:00Z'),
+    ];
+    const logs: ReviewLog[] = [
+      { wordId: 'a1:old:noun', rating: 'good', reviewedAt: new Date('2026-01-10T07:00:00Z') },
+    ];
+    const plan = planToday(
+      NOW,
+      cards,
+      new Set(['a1:due:noun', 'a1:n1:noun', 'a1:n2:noun']),
+      ['a1:n1:noun', 'a1:n2:noun'],
+      { newWordsPerDay: 2 },
+      logs,
+    );
+    expect(plan.queue).toEqual(['a1:due:noun', 'a1:n1:noun']);
+  });
+});
+
+describe('isInTodaysQueue', () => {
+  it('tells whether a word is studied today', () => {
+    const plan = { queue: ['a', 'b'], dueCount: 1, newCount: 1 };
+    expect(isInTodaysQueue(plan, 'b')).toBe(true);
+    expect(isInTodaysQueue(plan, 'c')).toBe(false);
   });
 });

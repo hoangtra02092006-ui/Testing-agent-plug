@@ -51,4 +51,17 @@ describe('DexieSettingsRepository', () => {
     expect((await repo.saveSettings({ newWordsPerDay: 500 })).newWordsPerDay).toBe(100);
     expect((await repo.saveSettings({ newWordsPerDay: 7.6 })).newWordsPerDay).toBe(8);
   });
+
+  it('remembers when the last backup was made', async () => {
+    const repo = new DexieSettingsRepository(db);
+    expect(await repo.getLastBackupAt()).toBeUndefined();
+    const at = new Date('2026-01-10T08:00:00Z');
+    await repo.markBackedUp(at);
+    expect(await repo.getLastBackupAt()).toEqual(at);
+  });
+
+  it('ignores an invalid stored backup date', async () => {
+    await db.settings.put({ key: 'lastBackupAt', value: 'nope' });
+    expect(await new DexieSettingsRepository(db).getLastBackupAt()).toBeUndefined();
+  });
 });

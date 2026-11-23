@@ -1,3 +1,4 @@
+import { AppError } from '../domain/errors';
 import type { Card, ReviewLog, Word } from '../domain/types';
 import type { VocabularyDb } from './db';
 import type { NewCustomWord, ProgressRepository } from './repositories';
@@ -12,12 +13,11 @@ export class DexieProgressRepository implements ProgressRepository {
     return this.db.cards.toArray();
   }
 
-  async saveCard(card: Card): Promise<void> {
-    await this.db.cards.put(card);
-  }
-
-  async addReviewLog(log: ReviewLog): Promise<void> {
-    await this.db.reviewLogs.add({ ...log });
+  async recordReview(card: Card, log: ReviewLog): Promise<void> {
+    await this.db.transaction('rw', [this.db.cards, this.db.reviewLogs], async () => {
+      await this.db.cards.put(card);
+      await this.db.reviewLogs.add({ ...log });
+    });
   }
 
   async getReviewLogs(): Promise<ReviewLog[]> {
@@ -29,7 +29,7 @@ export class DexieProgressRepository implements ProgressRepository {
     const headword = input.headword.trim();
     const definitionEn = input.definitionEn.trim();
     if (!headword || !definitionEn) {
-      throw new Error('A custom word needs a headword and a meaning.');
+      throw new AppError('customWordIncomplete', 'A custom word needs a headword and a meaning.');
     }
     const word: Word = {
       ...input,
