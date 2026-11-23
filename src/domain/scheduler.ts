@@ -72,7 +72,9 @@ export class FsrsScheduler implements Scheduler {
   }
 
   review(card: Card, rating: Rating, now: Date): Card {
-    const result = this.engine.next(toFsrsCard(card), now, RATING_MAP[rating]);
+    // A device clock set backwards must not break reviews: never review before the last review.
+    const at = card.lastReview && card.lastReview > now ? card.lastReview : now;
+    const result = this.engine.next(toFsrsCard(card), at, RATING_MAP[rating]);
     return toCard(card.wordId, result.card);
   }
 }

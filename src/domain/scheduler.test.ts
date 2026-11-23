@@ -99,4 +99,11 @@ describe('FsrsScheduler', () => {
       expect(scheduler.isValidCard(card)).toBe(true);
     }
   });
+
+  it('still reviews when the device clock has moved back several days', () => {
+    const card = scheduler.review(scheduler.createCard('w1', NOW), 'easy', NOW);
+    const clockBack = new Date(NOW.getTime() - 5 * DAY);
+    const next = scheduler.review(card, 'good', clockBack);
+    expect(next.due.getTime()).toBeGreaterThan(NOW.getTime());
+  });
 });
