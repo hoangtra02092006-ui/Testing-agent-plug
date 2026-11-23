@@ -3,6 +3,7 @@ import type { VocabularyDb } from './db';
 import type { SettingsRepository } from './repositories';
 
 const KEY = 'studySettings';
+const LAST_BACKUP_KEY = 'lastBackupAt';
 const MAX_NEW_WORDS_PER_DAY = 100;
 
 export class DexieSettingsRepository implements SettingsRepository {
@@ -18,6 +19,16 @@ export class DexieSettingsRepository implements SettingsRepository {
     const next = sanitize({ ...(await this.getSettings()), ...changes });
     await this.db.settings.put({ key: KEY, value: next });
     return next;
+  }
+
+  async getLastBackupAt(): Promise<Date | undefined> {
+    const row = await this.db.settings.get(LAST_BACKUP_KEY);
+    const date = typeof row?.value === 'string' ? new Date(row.value) : undefined;
+    return date && !Number.isNaN(date.getTime()) ? date : undefined;
+  }
+
+  async markBackedUp(at: Date): Promise<void> {
+    await this.db.settings.put({ key: LAST_BACKUP_KEY, value: at.toISOString() });
   }
 }
 

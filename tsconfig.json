@@ -14,5 +14,5 @@
     "noEmit": true,
     "types": ["vitest/globals", "node"]
   },
-  "include": ["src"]
+  "include": ["src", "data-pipeline"]
 }

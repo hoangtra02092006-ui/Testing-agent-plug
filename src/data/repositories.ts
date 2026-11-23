@@ -19,4 +19,6 @@ export interface ProgressRepository {
 export interface SettingsRepository {
   getSettings(): Promise<StudySettings>;
   saveSettings(changes: Partial<StudySettings>): Promise<StudySettings>;
+  getLastBackupAt(): Promise<Date | undefined>;
+  markBackedUp(at: Date): Promise<void>;
 }
