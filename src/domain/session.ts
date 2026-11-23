@@ -1,5 +1,12 @@
 import { localDayNumber } from './stats';
-import type { Card, Rating, ReviewLog, StudySettings } from './types';
+import {
+  CEFR_LEVELS,
+  type Card,
+  type CefrLevel,
+  type Rating,
+  type ReviewLog,
+  type StudySettings,
+} from './types';
 
 export interface SessionPlan {
   /** Word ids in the order they should be shown. */
@@ -54,4 +61,42 @@ export function advanceQueue(queue: string[], wordId: string, rating: Rating): s
   if (index === -1) return queue;
   const rest = [...queue.slice(0, index), ...queue.slice(index + 1)];
   return rating === 'again' ? [...rest, wordId] : rest;
+}
+
+/** CEFR level encoded in a word id ("a1:cat:noun" → "A1"); undefined for custom words. */
+export function levelOfWordId(wordId: string): CefrLevel | undefined {
+  const prefix = wordId.split(':')[0].toUpperCase();
+  return (CEFR_LEVELS as readonly string[]).includes(prefix) ? (prefix as CefrLevel) : undefined;
+}
+
+/** Word files to load: the chosen level plus the levels of words already studied, if published. */
+export function levelsToLoad(
+  chosen: CefrLevel,
+  cards: Card[],
+  available: readonly CefrLevel[],
+): CefrLevel[] {
+  const levels = new Set<CefrLevel>([chosen]);
+  for (const c of cards) {
+    const level = levelOfWordId(c.wordId);
+    if (level) levels.add(level);
+  }
+  return [...levels].filter((l) => available.includes(l));
+}
+
+/** Today's plan from stored progress. Cards whose word data is no longer available are left out. */
+export function planToday(
+  now: Date,
+  cards: Card[],
+  wordIds: ReadonlySet<string>,
+  candidateNewWordIds: string[],
+  settings: Pick<StudySettings, 'newWordsPerDay'>,
+  logs: ReviewLog[],
+): SessionPlan {
+  return buildSession(
+    now,
+    cards.filter((c) => wordIds.has(c.wordId)),
+    candidateNewWordIds,
+    settings,
+    countNewWordsIntroducedToday(logs, now),
+  );
 }

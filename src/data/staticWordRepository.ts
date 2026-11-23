@@ -1,3 +1,4 @@
+import { AppError } from '../domain/errors';
 import type { CefrLevel, Word } from '../domain/types';
 import type { WordRepository } from './repositories';
 
@@ -25,11 +26,15 @@ export class StaticWordRepository implements WordRepository {
   private async load(level: CefrLevel): Promise<Word[]> {
     const response = await this.fetcher(`${this.baseUrl}/${level}.json`);
     if (!response.ok) {
-      throw new Error(`Could not load words for level ${level} (HTTP ${response.status}).`);
+      throw new AppError(
+        'wordsLoad',
+        `Could not load words for level ${level} (HTTP ${response.status}).`,
+        { level, status: response.status },
+      );
     }
     const data = await response.json();
     if (!Array.isArray(data)) {
-      throw new Error(`Word file for level ${level} is not a list.`);
+      throw new AppError('wordsFormat', `Word file for level ${level} is not a list.`, { level });
     }
     return data as Word[];
   }

@@ -61,5 +61,20 @@
   "about.sources": "Data sources",
   "about.missing": "This first version has no Vietnamese meanings yet and only level A1. Some words are not included yet because no open definition or example was found.",
   "home.days_one": "{{count}} day",
-  "home.days_other": "{{count}} days"
+  "home.days_other": "{{count}} days",
+  "errors.backupNotJson": "This file is not a valid backup (it is not JSON).",
+  "errors.backupWrongApp": "This file is not a backup from this app.",
+  "errors.backupVersion": "This backup comes from a newer or unknown version ({{version}}).",
+  "errors.backupMissingList": "The backup is missing the \"{{key}}\" part.",
+  "errors.backupInvalid": "The backup is damaged at {{where}}.",
+  "errors.backupDuplicate": "The backup has a duplicate entry at {{where}}.",
+  "errors.wordsLoad": "Could not load the words for level {{level}}. Check your connection and try again.",
+  "errors.wordsFormat": "The word file for level {{level}} is damaged.",
+  "errors.customWordIncomplete": "Please enter a word and its meaning.",
+  "errors.perDayRange": "Enter a whole number from 1 to 100.",
+  "errors.storageUnavailable": "This browser is not letting the app store data (private mode or blocked site storage). Allow storage for this site and try again.",
+  "errors.storageFull": "The browser's storage is full. Free some space and try again.",
+  "errors.unknown": "Something unexpected happened. Please try again.",
+  "errors.details": "Technical details",
+  "add.savedTomorrow": "\"{{word}}\" was added. Today's new-word limit is reached, so it will appear tomorrow."
 }

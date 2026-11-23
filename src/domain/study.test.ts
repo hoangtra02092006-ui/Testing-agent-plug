@@ -1,5 +1,5 @@
 import { FsrsScheduler } from './scheduler';
-import { answerCard, needsBackupReminder } from './study';
+import { answerCard, needsBackupReminder, parseNewWordsPerDay } from './study';
 
 const NOW = new Date('2026-01-10T08:00:00Z');
 const DAY = 24 * 60 * 60 * 1000;
@@ -39,5 +39,21 @@ describe('needsBackupReminder', () => {
   it('counts from the last backup when there is one', () => {
     expect(needsBackupReminder(daysAgo(30), daysAgo(6), NOW)).toBe(false);
     expect(needsBackupReminder(daysAgo(30), daysAgo(8), NOW)).toBe(true);
+  });
+});
+
+describe('parseNewWordsPerDay', () => {
+  it.each([
+    ['10', 10],
+    [' 1 ', 1],
+    ['100', 100],
+    ['0', null],
+    ['101', null],
+    ['', null],
+    ['2.5', null],
+    ['-3', null],
+    ['abc', null],
+  ])('parseNewWordsPerDay(%j) = %j', (input, expected) => {
+    expect(parseNewWordsPerDay(input)).toBe(expected);
   });
 });

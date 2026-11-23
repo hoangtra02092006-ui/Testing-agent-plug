@@ -60,5 +60,20 @@
   "about.body": "Ứng dụng dùng phương pháp ôn ngắt quãng (thuật toán FSRS) và tự nhớ trước khi xem đáp án.",
   "about.sources": "Nguồn dữ liệu",
   "about.missing": "Bản đầu chưa có nghĩa tiếng Việt và mới có mức A1. Một số từ chưa có trong bộ vì chưa tìm được định nghĩa hoặc câu ví dụ mở.",
-  "home.days_other": "{{count}} ngày"
+  "home.days_other": "{{count}} ngày",
+  "errors.backupNotJson": "File này không phải bản sao lưu hợp lệ (không phải JSON).",
+  "errors.backupWrongApp": "File này không phải bản sao lưu của ứng dụng.",
+  "errors.backupVersion": "Bản sao lưu đến từ phiên bản mới hơn hoặc không rõ ({{version}}).",
+  "errors.backupMissingList": "Bản sao lưu thiếu phần \"{{key}}\".",
+  "errors.backupInvalid": "Bản sao lưu bị hỏng ở {{where}}.",
+  "errors.backupDuplicate": "Bản sao lưu có mục trùng ở {{where}}.",
+  "errors.wordsLoad": "Không tải được từ mức {{level}}. Kiểm tra kết nối mạng rồi thử lại.",
+  "errors.wordsFormat": "File từ mức {{level}} bị hỏng.",
+  "errors.customWordIncomplete": "Cần nhập từ và nghĩa.",
+  "errors.perDayRange": "Nhập số nguyên từ 1 đến 100.",
+  "errors.storageUnavailable": "Trình duyệt đang không cho ứng dụng lưu dữ liệu (chế độ ẩn danh hoặc đã chặn lưu trữ). Hãy cho phép lưu trữ cho trang này rồi thử lại.",
+  "errors.storageFull": "Bộ nhớ của trình duyệt đã đầy. Giải phóng bớt rồi thử lại.",
+  "errors.unknown": "Có lỗi không mong muốn. Vui lòng thử lại.",
+  "errors.details": "Chi tiết kỹ thuật",
+  "add.savedTomorrow": "Đã thêm \"{{word}}\". Hôm nay đã đủ số từ mới nên từ này sẽ xuất hiện từ ngày mai."
 }

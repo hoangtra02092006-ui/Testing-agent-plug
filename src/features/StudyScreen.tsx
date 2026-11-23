@@ -7,7 +7,7 @@ import { answerCard } from '../domain/study';
 import { RATINGS, type Rating, type ReviewLog, type StudySettings } from '../domain/types';
 import { speak, useEnglishVoice } from '../shared/lib/speech';
 import { useAsync } from '../shared/lib/useAsync';
-import { Button, Card, ErrorView, Loading, Screen, SpeakButton } from '../shared/ui';
+import { Button, Card, ErrorView, Input, Loading, Screen, SpeakButton } from '../shared/ui';
 import { loadStudyData, type StudyData } from './loadStudyData';
 
 export function StudyScreen({ settings, onExit }: { settings: StudySettings; onExit: () => void }) {
@@ -33,7 +33,7 @@ function Session({ data, onExit }: { data: StudyData; onExit: () => void }) {
   const [revealed, setRevealed] = useState(false);
   const [typed, setTyped] = useState('');
   const [saving, setSaving] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
+  const [failed, setFailed] = useState<{ error: unknown; rating: Rating } | null>(null);
 
   if (queue.length === 0) {
     const session = computeStats(logsSince(sessionLogs, startedAt), new Date());
@@ -62,7 +62,7 @@ function Session({ data, onExit }: { data: StudyData; onExit: () => void }) {
 
   const rate = async (rating: Rating) => {
     setSaving(true);
-    setError(null);
+    setFailed(null);
     try {
       const { card, log } = answerCard(
         services.scheduler,
@@ -71,15 +71,14 @@ function Session({ data, onExit }: { data: StudyData; onExit: () => void }) {
         rating,
         new Date(),
       );
-      await services.progress.saveCard(card);
-      await services.progress.addReviewLog(log);
+      await services.progress.recordReview(card, log);
       cards.set(wordId, card);
       setSessionLogs((logs) => [...logs, log]);
       setQueue((q) => advanceQueue(q, wordId, rating));
       setRevealed(false);
       setTyped('');
     } catch (e) {
-      setError(e instanceof Error ? e : new Error(String(e)));
+      setFailed({ error: e, rating });
     } finally {
       setSaving(false);
     }
@@ -90,7 +89,7 @@ function Session({ data, onExit }: { data: StudyData; onExit: () => void }) {
       <p className="text-sm text-slate-500" aria-live="polite">
         {t('study.remaining', { count: queue.length })}
       </p>
-      <Card className="flex flex-col items-center gap-2 py-8 text-center">
+      <Card padding="tall" className="flex flex-col items-center gap-2 text-center">
         {word.level === 'custom' && (
           <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs text-amber-800">
             {t('study.custom')}
@@ -107,14 +106,15 @@ function Session({ data, onExit }: { data: StudyData; onExit: () => void }) {
         <>
           <label className="block">
             <span className="text-sm text-slate-600">{t('study.typeHint')}</span>
-            <input
-              value={typed}
-              onChange={(e) => setTyped(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && setRevealed(true)}
-              className="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-3 text-base focus:border-indigo-500 focus:outline-none"
-            />
+            <span className="mt-1 block">
+              <Input
+                value={typed}
+                onChange={(e) => setTyped(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && setRevealed(true)}
+              />
+            </span>
           </label>
-          <Button className="min-h-14 text-lg" onClick={() => setRevealed(true)}>
+          <Button size="lg" onClick={() => setRevealed(true)}>
             {t('study.reveal')}
           </Button>
         </>
@@ -156,7 +156,7 @@ function Session({ data, onExit }: { data: StudyData; onExit: () => void }) {
               </div>
             )}
           </Card>
-          {error && <ErrorView error={error} onRetry={() => setError(null)} />}
+          {failed && <ErrorView error={failed.error} onRetry={() => rate(failed.rating)} />}
           <div className="grid grid-cols-4 gap-2">
             {RATINGS.map((rating) => (
               <Button
@@ -164,7 +164,7 @@ function Session({ data, onExit }: { data: StudyData; onExit: () => void }) {
                 variant={rating === 'good' ? 'primary' : 'secondary'}
                 disabled={saving}
                 onClick={() => rate(rating)}
-                className="px-1 text-sm sm:text-base"
+                size="tight"
               >
                 {t(`study.rate.${rating}`)}
               </Button>

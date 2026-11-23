@@ -2,8 +2,11 @@ import { useRef, useState, type ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { services } from '../app/services';
 import { exportBackup, importBackup, parseBackup, type BackupFile } from '../data/backup';
+import { AppError } from '../domain/errors';
+import { parseNewWordsPerDay } from '../domain/study';
 import type { StudySettings } from '../domain/types';
-import { Button, Card, Screen } from '../shared/ui';
+import { describeError } from '../shared/lib/errors';
+import { Button, Card, Input, Screen, StatusMessage } from '../shared/ui';
 
 export function SettingsScreen({
   settings,
@@ -12,7 +15,7 @@ export function SettingsScreen({
 }: {
   settings: StudySettings;
   onBack: () => void;
-  onChange: (changes: Partial<StudySettings>) => Promise<void>;
+  onChange: (changes: Partial<StudySettings>) => Promise<StudySettings>;
 }) {
   const { t } = useTranslation();
   const [perDay, setPerDay] = useState(String(settings.newWordsPerDay));
@@ -21,50 +24,66 @@ export function SettingsScreen({
   const fileInput = useRef<HTMLInputElement>(null);
 
   const report = (ok: boolean, text: string) => setMessage({ ok, text });
-
-  const savePerDay = async () => {
-    await onChange({ newWordsPerDay: Number(perDay) });
-    report(true, t('settings.saved'));
+  /** Runs an action and reports any failure in the interface language. */
+  const attempt = async (action: () => Promise<void>) => {
+    try {
+      await action();
+    } catch (err) {
+      report(false, describeError(err, t).message);
+    }
   };
 
-  const download = async () => {
-    const now = new Date();
-    const backup = await exportBackup(services.db, now);
-    const url = URL.createObjectURL(
-      new Blob([JSON.stringify(backup)], { type: 'application/json' }),
-    );
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `vocab-backup-${now.toISOString().slice(0, 10)}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-    await services.settings.markBackedUp(now);
-  };
+  const savePerDay = () =>
+    attempt(async () => {
+      const value = parseNewWordsPerDay(perDay);
+      if (value === null) throw new AppError('perDayRange', `Invalid new words per day: ${perDay}`);
+      const saved = await onChange({ newWordsPerDay: value });
+      setPerDay(String(saved.newWordsPerDay));
+      report(true, t('settings.saved'));
+    });
+
+  const changeLanguage = (uiLanguage: StudySettings['uiLanguage']) =>
+    attempt(async () => {
+      await onChange({ uiLanguage });
+      setMessage(null);
+    });
+
+  const download = () =>
+    attempt(async () => {
+      const now = new Date();
+      const backup = await exportBackup(services.db, now);
+      const url = URL.createObjectURL(
+        new Blob([JSON.stringify(backup)], { type: 'application/json' }),
+      );
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `vocab-backup-${now.toISOString().slice(0, 10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      await services.settings.markBackedUp(now);
+    });
 
   const chooseFile = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     e.target.value = '';
     if (!file) return;
-    try {
+    await attempt(async () => {
       setPending(parseBackup(await file.text(), services.scheduler));
       setMessage(null);
-    } catch (err) {
-      report(false, err instanceof Error ? err.message : String(err));
-    }
+    });
   };
 
   const confirmImport = async () => {
     if (!pending) return;
-    try {
+    await attempt(async () => {
       await importBackup(services.db, pending);
       setPending(null);
-      const restored = await services.settings.getSettings();
-      await onChange(restored);
+      // The progress now matches a backup file, so the reminder restarts from today.
+      await services.settings.markBackedUp(new Date());
+      const restored = await onChange(await services.settings.getSettings());
       setPerDay(String(restored.newWordsPerDay));
       report(true, t('settings.importDone'));
-    } catch (err) {
-      report(false, err instanceof Error ? err.message : String(err));
-    }
+    });
   };
 
   return (
@@ -81,7 +100,7 @@ export function SettingsScreen({
               key={lang}
               variant={settings.uiLanguage === lang ? 'primary' : 'secondary'}
               aria-pressed={settings.uiLanguage === lang}
-              onClick={() => onChange({ uiLanguage: lang })}
+              onClick={() => changeLanguage(lang)}
             >
               {lang === 'vi' ? 'Tiếng Việt' : 'English'}
             </Button>
@@ -93,15 +112,15 @@ export function SettingsScreen({
           {t('settings.newPerDay')}
         </label>
         <div className="mt-3 flex gap-2">
-          <input
+          <Input
             id="per-day"
+            width="short"
             type="number"
             min={1}
             max={100}
             inputMode="numeric"
             value={perDay}
             onChange={(e) => setPerDay(e.target.value)}
-            className="w-24 rounded-xl border border-slate-300 px-3 text-base focus:border-indigo-500 focus:outline-none"
           />
           <Button variant="secondary" onClick={savePerDay}>
             {t('common.save')}
@@ -142,11 +161,7 @@ export function SettingsScreen({
           </div>
         )}
       </Card>
-      {message && (
-        <p role="status" className={message.ok ? 'text-green-700' : 'text-red-700'}>
-          {message.text}
-        </p>
-      )}
+      {message && <StatusMessage ok={message.ok}>{message.text}</StatusMessage>}
     </Screen>
   );
 }

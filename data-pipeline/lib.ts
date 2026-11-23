@@ -15,15 +15,17 @@ export interface Synset {
   examples: string[];
 }
 
-/** Lexical entries of one lemma: part of speech + senses (synset ids) in frequency order. */
+/** Lexical entries of one lemma (keyed by exact written form): part of speech + senses in frequency order. */
 export interface LexEntry {
   pos: string;
   synsetIds: string[];
 }
 
+export type MissingReason = 'no-definition' | 'no-example' | 'sensitive';
+
 export interface BuildResult {
   words: Word[];
-  missing: { headword: string; pos: string; reason: 'no-definition' | 'no-example' }[];
+  missing: { headword: string; pos: string; reason: MissingReason }[];
 }
 
 /** Minimal RFC 4180 CSV parser (quoted fields, escaped quotes, CRLF). */
@@ -125,8 +127,58 @@ export function slug(text: string): string {
 }
 
 /**
- * Picks, in sense-frequency order, the first sense of a matching part of speech that has a
- * definition and an example using the word, so the definition and examples describe the same sense.
+ * Words that make a definition or example unsuitable for school learners. Matching text is dropped
+ * and reported rather than shown; whole words only, so "Sussex" or "skill" are not caught.
+ */
+const SENSITIVE_WORDS = [
+  'sex',
+  'sexual',
+  'sexually',
+  'drug',
+  'drugs',
+  'kill',
+  'killed',
+  'killing',
+  'murder',
+  'murdered',
+  'rape',
+  'raped',
+  'prostitute',
+  'prostitution',
+  'suicide',
+  'naked',
+  'nude',
+  'whore',
+  'bitch',
+  'despicable',
+  'spiteful',
+  'erotic',
+  'genitals',
+  'penis',
+  'vagina',
+  'cocaine',
+  'heroin',
+  'gun',
+  'guns',
+  'shoot',
+  'shot',
+  'corpse',
+  'torture',
+];
+const SENSITIVE_PATTERN = new RegExp(`(^|[^a-z])(${SENSITIVE_WORDS.join('|')})([^a-z]|$)`, 'i');
+/** Phrases that are harmless word by word but not suitable together. */
+const SENSITIVE_PHRASES = [/sells? (her|his|their) body/i, /make love/i];
+
+export function isSensitive(text: string): boolean {
+  return SENSITIVE_PATTERN.test(text) || SENSITIVE_PHRASES.some((p) => p.test(text));
+}
+
+/**
+ * Uses the primary sense only: the first WordNet sense of a matching part of speech, which is the
+ * most frequent meaning and the one a learner at this level needs. Examples come from that same
+ * sense. When it has no usable example the word is reported, never filled from a rarer sense.
+ * The lemma is matched with its exact casing so "cat" never picks up "CAT" (the scan) and "day"
+ * never picks up "Day" (the writer).
  */
 export function buildWords(
   rows: ProfileRow[],
@@ -145,19 +197,25 @@ export function buildWords(
     seen.add(id);
 
     const posSet = wordnetPos(row.pos);
-    const senses = (entries.get(headword.toLowerCase()) ?? [])
+    const primary = (entries.get(headword) ?? [])
       .filter((e) => posSet.includes(e.pos))
       .flatMap((e) => e.synsetIds)
       .map((sid) => synsets.get(sid))
-      .filter((s): s is Synset => Boolean(s?.definition));
+      .find((s): s is Synset => Boolean(s?.definition));
 
-    if (senses.length === 0) {
-      missing.push({ headword, pos: row.pos, reason: 'no-definition' });
+    const report = (reason: MissingReason) => missing.push({ headword, pos: row.pos, reason });
+    if (!primary) {
+      report('no-definition');
       continue;
     }
-    const sense = senses.find((s) => s.examples.some((ex) => exampleUsesWord(ex, headword)));
-    if (!sense) {
-      missing.push({ headword, pos: row.pos, reason: 'no-example' });
+    const usable = primary.examples.filter((ex) => exampleUsesWord(ex, headword));
+    if (usable.length === 0) {
+      report('no-example');
+      continue;
+    }
+    const examples = usable.filter((ex) => !isSensitive(ex));
+    if (isSensitive(primary.definition!) || examples.length === 0) {
+      report('sensitive');
       continue;
     }
     words.push({
@@ -165,8 +223,8 @@ export function buildWords(
       headword,
       pos: row.pos,
       level: row.level,
-      definitionEn: sense.definition!,
-      examples: sense.examples.filter((ex) => exampleUsesWord(ex, headword)).slice(0, maxExamples),
+      definitionEn: primary.definition!,
+      examples: examples.slice(0, maxExamples),
     });
   }
   return { words, missing };

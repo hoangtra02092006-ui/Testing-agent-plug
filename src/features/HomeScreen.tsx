@@ -34,16 +34,12 @@ export function HomeScreen({
       title={t('app.title')}
       actions={
         <nav className="flex gap-1">
-          <Button
-            variant="ghost"
-            className="min-h-10 px-2 text-sm"
-            onClick={() => onNavigate('add')}
-          >
+          <Button variant="ghost" size="sm" onClick={() => onNavigate('add')}>
             + {t('nav.addWord')}
           </Button>
           <Button
             variant="ghost"
-            className="min-h-10 px-2 text-sm"
+            size="sm"
             aria-label={t('nav.settings')}
             onClick={() => onNavigate('settings')}
           >
@@ -57,11 +53,12 @@ export function HomeScreen({
       {state.status === 'ready' && (
         <>
           {state.data.remindBackup && (
-            <Card className="bg-amber-50 ring-amber-200">
+            <Card tone="warning">
               <p className="text-sm text-amber-900">{t('home.backupReminder')}</p>
               <Button
                 variant="secondary"
-                className="mt-3 min-h-10 text-sm"
+                size="sm"
+                className="mt-3"
                 onClick={() => onNavigate('settings')}
               >
                 {t('home.backupNow')}
@@ -86,7 +83,7 @@ export function HomeScreen({
             />
           </div>
           {state.data.plan.queue.length > 0 ? (
-            <Button className="mt-2 min-h-14 text-lg" onClick={() => onNavigate('study')}>
+            <Button size="lg" className="mt-2" onClick={() => onNavigate('study')}>
               {t('home.start')}
             </Button>
           ) : (
@@ -94,7 +91,8 @@ export function HomeScreen({
           )}
           <Button
             variant="ghost"
-            className="mt-auto self-center text-sm"
+            size="sm"
+            className="mt-auto self-center"
             onClick={() => onNavigate('about')}
           >
             {t('nav.about')}
@@ -107,7 +105,7 @@ export function HomeScreen({
 
 function Stat({ label, value }: { label: string; value: string | number }) {
   return (
-    <Card className="p-3 text-center">
+    <Card padding="compact" className="text-center">
       <p className="text-2xl font-bold">{value}</p>
       <p className="mt-1 text-xs leading-tight text-slate-500">{label}</p>
     </Card>

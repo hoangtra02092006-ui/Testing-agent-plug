@@ -1,6 +1,7 @@
 import {
   buildWords,
   exampleUsesWord,
+  isSensitive,
   parseCsv,
   parseProfile,
   primaryHeadword,
@@ -70,30 +71,52 @@ describe('helpers', () => {
   });
 });
 
+describe('isSensitive', () => {
+  it.each([
+    ['She sells her body to survive', true],
+    ['the drug trade', true],
+    ['a spiteful woman gossip', true],
+    ['Sussex is a county', false],
+    ['a useful skill', false],
+    ['the cat sat on the mat', false],
+  ])('isSensitive(%s) = %s', (text, expected) => {
+    expect(isSensitive(text)).toBe(expected);
+  });
+});
+
 describe('buildWords', () => {
   const synsets = new Map<string, Synset>([
-    ['s1', { definition: 'first sense without usable example', examples: ['nothing here'] }],
+    ['s0', { examples: ['swim'] }],
     [
-      's2',
+      's1',
       {
         definition: 'move through water',
         examples: ['she can swim', 'fish swim fast', 'they swim'],
       },
     ],
-    ['s3', { examples: ['swim'] }],
-    ['n1', { definition: 'a pet', examples: [] }],
+    [
+      's2',
+      { definition: 'be covered with a liquid', examples: ['the meat was swimming in gravy'] },
+    ],
+    ['c1', { definition: 'feline mammal', examples: [] }],
+    ['c2', { definition: 'a spiteful woman gossip', examples: ['what a cat she is!'] }],
+    ['cap1', { definition: 'computerized axial tomography', examples: ['a CAT scan'] }],
+    ['d1', { definition: 'a day of the week', examples: ['a day off', 'drugs every day'] }],
+    ['b1', { definition: 'a drug dealer', examples: ['a dealer sells'] }],
+    ['m1', { definition: 'mammal', examples: ['kill the rat'] }],
   ]);
   const entries = new Map<string, LexEntry[]>([
-    ['swim', [{ pos: 'v', synsetIds: ['s3', 's1', 's2'] }]],
-    ['cat', [{ pos: 'n', synsetIds: ['n1'] }]],
+    ['swim', [{ pos: 'v', synsetIds: ['s0', 's1', 's2'] }]],
+    ['cat', [{ pos: 'n', synsetIds: ['c1', 'c2'] }]],
+    ['CAT', [{ pos: 'n', synsetIds: ['cap1'] }]],
+    ['day', [{ pos: 'n', synsetIds: ['d1'] }]],
+    ['dealer', [{ pos: 'n', synsetIds: ['b1'] }]],
+    ['rat', [{ pos: 'n', synsetIds: ['m1'] }]],
   ]);
+  const row = (headword: string, pos = 'noun') => ({ headword, pos, level: 'A1' as const });
 
-  it('uses the first sense that has both a definition and an example with the word', () => {
-    const { words } = buildWords(
-      [{ headword: 'swim', pos: 'verb', level: 'A1' }],
-      entries,
-      synsets,
-    );
+  it('uses the primary sense (first one with a definition) and its examples with the word', () => {
+    const { words } = buildWords([row('swim', 'verb')], entries, synsets);
     expect(words).toEqual([
       {
         id: 'a1:swim:verb',
@@ -106,27 +129,42 @@ describe('buildWords', () => {
     ]);
   });
 
-  it('reports words without a definition or without an example', () => {
+  it('reports a word whose primary sense has no example instead of using a rarer sense', () => {
+    const { words, missing } = buildWords([row('cat')], entries, synsets);
+    expect(words).toEqual([]);
+    expect(missing).toEqual([{ headword: 'cat', pos: 'noun', reason: 'no-example' }]);
+  });
+
+  it('matches the lemma with its exact casing', () => {
+    const { missing } = buildWords([row('Cat')], entries, synsets);
+    expect(missing).toEqual([{ headword: 'Cat', pos: 'noun', reason: 'no-definition' }]);
+  });
+
+  it('drops sensitive examples and reports words left with no example or a sensitive definition', () => {
     const { words, missing } = buildWords(
-      [
-        { headword: 'cat', pos: 'noun', level: 'A1' },
-        { headword: 'the', pos: 'determiner', level: 'A1' },
-        { headword: 'swim', pos: 'noun', level: 'A1' },
-      ],
+      [row('day'), row('dealer'), row('rat')],
       entries,
       synsets,
     );
-    expect(words).toEqual([]);
+    expect(words.map((w) => w.examples)).toEqual([['a day off']]);
     expect(missing).toEqual([
-      { headword: 'cat', pos: 'noun', reason: 'no-example' },
+      { headword: 'dealer', pos: 'noun', reason: 'sensitive' },
+      { headword: 'rat', pos: 'noun', reason: 'sensitive' },
+    ]);
+  });
+
+  it('reports words without a matching part of speech', () => {
+    const { missing } = buildWords([row('the', 'determiner'), row('swim')], entries, synsets);
+    expect(missing).toEqual([
       { headword: 'the', pos: 'determiner', reason: 'no-definition' },
       { headword: 'swim', pos: 'noun', reason: 'no-definition' },
     ]);
   });
 
   it('skips duplicated rows', () => {
-    const row = { headword: 'swim', pos: 'verb', level: 'A1' as const };
-    expect(buildWords([row, row], entries, synsets).words).toHaveLength(1);
+    expect(
+      buildWords([row('swim', 'verb'), row('swim', 'verb')], entries, synsets).words,
+    ).toHaveLength(1);
   });
 });
 

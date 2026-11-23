@@ -28,3 +28,13 @@ export function needsBackupReminder(
   if (!since) return false;
   return now.getTime() - since.getTime() > BACKUP_REMINDER_DAYS * 24 * 60 * 60 * 1000;
 }
+
+export const MAX_NEW_WORDS_PER_DAY = 100;
+
+/** Parses the "new words per day" field: a whole number from 1 to 100, otherwise null. */
+export function parseNewWordsPerDay(input: string): number | null {
+  const text = input.trim();
+  if (!/^\d+$/.test(text)) return null;
+  const n = Number(text);
+  return n >= 1 && n <= MAX_NEW_WORDS_PER_DAY ? n : null;
+}

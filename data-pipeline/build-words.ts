@@ -60,7 +60,7 @@ function readWordnet(
       const a = node.attributes as Record<string, string>;
       if (node.name === 'LexicalEntry') entry = { pos: '', synsetIds: [] };
       else if (node.name === 'Lemma' && entry) {
-        lemma = a.writtenForm.toLowerCase();
+        lemma = a.writtenForm;
         entry.pos = a.partOfSpeech;
       } else if (node.name === 'Sense' && entry) entry.synsetIds.push(a.synset);
       else if (node.name === 'Synset') {

@@ -1,0 +1,8 @@
+# Generated files
+dist
+coverage
+public/words
+data-pipeline/report-*.md
+# Hand-written Markdown docs keep their own layout
+docs
+CLAUDE.md

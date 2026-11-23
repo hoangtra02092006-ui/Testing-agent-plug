@@ -27,30 +27,32 @@ const card: Card = {
 };
 
 describe('DexieProgressRepository', () => {
-  it('saves and updates cards (AC10: progress survives reopening)', async () => {
-    await repo.saveCard(card);
-    await repo.saveCard({ ...card, reps: 3 });
+  const log = (wordId: string, iso: string) =>
+    ({ wordId, rating: 'good', reviewedAt: new Date(iso) }) as const;
+
+  it('records reviews: updates the card and keeps logs in time order (AC10)', async () => {
+    await repo.recordReview(card, log('w1', '2026-01-10T09:00:00Z'));
+    await repo.recordReview({ ...card, reps: 3 }, log('w1', '2026-01-10T08:00:00Z'));
     const reopened = new DexieProgressRepository(new VocabularyDb(db.name));
     const cards = await reopened.getCards();
     expect(cards).toHaveLength(1);
     expect(cards[0]).toMatchObject({ wordId: 'w1', reps: 3 });
     expect(cards[0].due).toEqual(card.due);
+    const logs = await reopened.getReviewLogs();
+    expect(logs.map((l) => l.reviewedAt.toISOString())).toEqual([
+      '2026-01-10T08:00:00.000Z',
+      '2026-01-10T09:00:00.000Z',
+    ]);
+    expect(logs[0]).not.toHaveProperty('id');
   });
 
-  it('stores review logs in time order', async () => {
-    await repo.addReviewLog({
-      wordId: 'b',
-      rating: 'good',
-      reviewedAt: new Date('2026-01-10T09:00:00Z'),
-    });
-    await repo.addReviewLog({
-      wordId: 'a',
-      rating: 'again',
-      reviewedAt: new Date('2026-01-10T08:00:00Z'),
-    });
-    const logs = await repo.getReviewLogs();
-    expect(logs.map((l) => l.wordId)).toEqual(['a', 'b']);
-    expect(logs[0]).not.toHaveProperty('id');
+  it('saves neither card nor log when writing the log fails', async () => {
+    const clashing = { ...log('w1', '2026-01-10T09:00:00Z'), id: 7 };
+    await repo.recordReview(card, clashing);
+    // Same log id again: the card is written first, then the log write fails.
+    await expect(repo.recordReview({ ...card, wordId: 'w2' }, clashing)).rejects.toThrow();
+    expect((await repo.getCards()).map((c) => c.wordId)).toEqual(['w1']);
+    expect(await repo.getReviewLogs()).toHaveLength(1);
   });
 
   const scheduler = new FsrsScheduler();

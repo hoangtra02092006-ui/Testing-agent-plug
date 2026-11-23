@@ -1,10 +1,10 @@
+import { MAX_NEW_WORDS_PER_DAY } from '../domain/study';
 import { CEFR_LEVELS, DEFAULT_SETTINGS, type StudySettings } from '../domain/types';
 import type { VocabularyDb } from './db';
 import type { SettingsRepository } from './repositories';
 
 const KEY = 'studySettings';
 const LAST_BACKUP_KEY = 'lastBackupAt';
-const MAX_NEW_WORDS_PER_DAY = 100;
 
 export class DexieSettingsRepository implements SettingsRepository {
   constructor(private readonly db: VocabularyDb) {}

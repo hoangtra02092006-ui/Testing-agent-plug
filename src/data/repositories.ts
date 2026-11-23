@@ -8,8 +8,8 @@ export type NewCustomWord = Omit<Word, 'id' | 'level'>;
 
 export interface ProgressRepository {
   getCards(): Promise<Card[]>;
-  saveCard(card: Card): Promise<void>;
-  addReviewLog(log: ReviewLog): Promise<void>;
+  /** Saves the scheduled card and its review log together, so stats and limits never drift. */
+  recordReview(card: Card, log: ReviewLog): Promise<void>;
   getReviewLogs(): Promise<ReviewLog[]>;
   /** Saves the word and its first card together, so the word enters the study queue (AC6). */
   addCustomWord(word: NewCustomWord, createCard: (wordId: string) => Card): Promise<Word>;
