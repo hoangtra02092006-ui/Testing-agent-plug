@@ -73,4 +73,30 @@ describe('FsrsScheduler', () => {
     ).toBe(false);
     expect(scheduler.isValidCard({ ...card, state: 'review' })).toBe(false);
   });
+
+  it.each([
+    ['state given as a string', { state: '2' }],
+    ['zero stability on a reviewed card', { stability: 0 }],
+    ['zero difficulty on a reviewed card', { difficulty: 0 }],
+    ['difficulty above 10', { difficulty: 11 }],
+    ['stability beyond the maximum interval', { stability: 1e308 }],
+    ['fractional learning steps', { learning_steps: 0.5 }],
+    ['negative elapsed days', { elapsed_days: -1 }],
+    ['non-numeric new-card stability', {}],
+  ])('rejects scheduler data with %s', (name, patch) => {
+    const reviewed = scheduler.review(scheduler.createCard('w1', NOW), 'easy', NOW);
+    const base = name.startsWith('non-numeric new') ? scheduler.createCard('w2', NOW) : reviewed;
+    const data = name.startsWith('non-numeric new')
+      ? { ...base.schedulerData, stability: null }
+      : { ...base.schedulerData, ...patch };
+    expect(scheduler.isValidCard({ ...base, schedulerData: data })).toBe(false);
+  });
+
+  it('accepts every card it produces through a long review history', () => {
+    let card = scheduler.createCard('w1', NOW);
+    for (const rating of ['good', 'again', 'hard', 'good', 'easy', 'again', 'good'] as const) {
+      card = scheduler.review(card, rating, card.due);
+      expect(scheduler.isValidCard(card)).toBe(true);
+    }
+  });
 });

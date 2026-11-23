@@ -1,5 +1,8 @@
 import { createEmptyCard, fsrs, Rating as FsrsRating, State, type Card as FsrsCard } from 'ts-fsrs';
-import type { Card, CardState, Rating } from './types';
+import { RATINGS, type Card, type CardState, type Rating } from './types';
+
+/** ts-fsrs default maximum interval (100 years). */
+const MAX_STABILITY_DAYS = 36500;
 
 export interface Scheduler {
   createCard(wordId: string, now: Date): Card;
@@ -39,11 +42,33 @@ export class FsrsScheduler implements Scheduler {
 
   isValidCard(card: Card): boolean {
     const d = card.schedulerData;
-    const nonNegative = (v: unknown) => typeof v === 'number' && Number.isFinite(v) && v >= 0;
-    const fields = ['stability', 'difficulty', 'elapsed_days', 'scheduled_days', 'learning_steps'];
-    if (!fields.every((f) => nonNegative(d[f]))) return false;
-    const state = d.state as State;
-    return state in STATE_MAP && STATE_MAP[state] === card.state;
+    const state = d.state;
+    if (!Number.isInteger(state) || !((state as number) in STATE_MAP)) return false;
+    if (STATE_MAP[state as State] !== card.state) return false;
+
+    const finiteAtLeast = (v: unknown, min: number) =>
+      typeof v === 'number' && Number.isFinite(v) && v >= min;
+    if (!finiteAtLeast(d.elapsed_days, 0) || !finiteAtLeast(d.scheduled_days, 0)) return false;
+    if (!Number.isInteger(d.learning_steps) || (d.learning_steps as number) < 0) return false;
+
+    if (state !== State.New) {
+      // FSRS memory model: stability > 0 (bounded by the maximum interval), difficulty in [1, 10].
+      const stability = d.stability as number;
+      const difficulty = d.difficulty as number;
+      if (!finiteAtLeast(stability, Number.EPSILON) || stability > MAX_STABILITY_DAYS) return false;
+      if (!finiteAtLeast(difficulty, 1) || difficulty > 10) return false;
+    } else if (!finiteAtLeast(d.stability, 0) || !finiteAtLeast(d.difficulty, 0)) {
+      return false;
+    }
+
+    // Final guard: every possible answer must produce a valid next due date.
+    try {
+      return RATINGS.every(
+        (rating) => !Number.isNaN(this.review(card, rating, card.due).due.getTime()),
+      );
+    } catch {
+      return false;
+    }
   }
 
   review(card: Card, rating: Rating, now: Date): Card {
