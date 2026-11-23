@@ -1,4 +1,5 @@
 import { CARD_STATES, RATINGS, type Card, type ReviewLog, type Word } from '../domain/types';
+import type { Scheduler } from '../domain/scheduler';
 import type { SettingRow, VocabularyDb } from './db';
 
 /** Version of the backup file format (independent of the IndexedDB schema version). */
@@ -36,7 +37,7 @@ export async function exportBackup(db: VocabularyDb, now: Date): Promise<BackupF
  * Parses and fully validates a backup file before anything is overwritten.
  * Throws an error naming the first invalid element.
  */
-export function parseBackup(json: string): BackupFile {
+export function parseBackup(json: string, scheduler: Pick<Scheduler, 'isValidCard'>): BackupFile {
   let raw: unknown;
   try {
     raw = JSON.parse(json);
@@ -55,7 +56,7 @@ export function parseBackup(json: string): BackupFile {
   ) {
     throw new Error(`Unsupported backup version ${String(version)}.`);
   }
-  return {
+  const backup: BackupFile = {
     app: 'vocabulary-trainer',
     schemaVersion: version,
     exportedAt: typeof raw.exportedAt === 'string' ? raw.exportedAt : '',
@@ -64,6 +65,34 @@ export function parseBackup(json: string): BackupFile {
     customWords: list(raw, 'customWords').map((item, i) => parseWord(item, `customWords[${i}]`)),
     settings: list(raw, 'settings').map((item, i) => parseSetting(item, `settings[${i}]`)),
   };
+  backup.cards.forEach((card, i) => {
+    if (!scheduler.isValidCard(card)) fail(`cards[${i}]`, 'schedulerData');
+  });
+  unique(
+    backup.cards.map((c) => c.wordId),
+    'cards',
+    'wordId',
+  );
+  unique(
+    backup.customWords.map((w) => w.id),
+    'customWords',
+    'id',
+  );
+  unique(
+    backup.settings.map((s) => s.key),
+    'settings',
+    'key',
+  );
+  return backup;
+}
+
+function unique(keys: string[], listName: string, field: string): void {
+  const seen = new Set<string>();
+  keys.forEach((key, i) => {
+    if (seen.has(key))
+      throw new Error(`Invalid backup: ${listName}[${i}].${field} "${key}" is duplicated.`);
+    seen.add(key);
+  });
 }
 
 /** Replaces all local progress with the backup content, atomically. */
@@ -121,11 +150,12 @@ function parseWord(item: unknown, where: string): Word {
   if (!Array.isArray(r.examples) || !r.examples.every((e) => typeof e === 'string'))
     fail(where, 'examples');
   return {
-    ...(r as unknown as Word),
     id: text(r.id, where, 'id'),
     headword: text(r.headword, where, 'headword'),
     pos: typeof r.pos === 'string' ? r.pos : '',
     level: 'custom',
+    ipa: optionalText(r.ipa, where, 'ipa'),
+    meaningVi: optionalText(r.meaningVi, where, 'meaningVi'),
     definitionEn: text(r.definitionEn, where, 'definitionEn'),
     examples: r.examples as string[],
   };
@@ -143,6 +173,12 @@ function record(item: unknown, where: string): Record<string, unknown> {
 
 function text(value: unknown, where: string, field: string): string {
   if (typeof value !== 'string' || value.trim() === '') fail(where, field);
+  return value as string;
+}
+
+function optionalText(value: unknown, where: string, field: string): string | undefined {
+  if (value === undefined || value === null) return undefined;
+  if (typeof value !== 'string') fail(where, field);
   return value as string;
 }
 

@@ -60,4 +60,17 @@ describe('FsrsScheduler', () => {
     }
     expect(intervals.at(-1)!).toBeGreaterThan(intervals[1]);
   });
+
+  it('validates its own scheduler data', () => {
+    const card = scheduler.review(scheduler.createCard('w1', NOW), 'good', NOW);
+    expect(scheduler.isValidCard(card)).toBe(true);
+    expect(scheduler.isValidCard(scheduler.createCard('w2', NOW))).toBe(true);
+    expect(
+      scheduler.isValidCard({ ...card, schedulerData: { ...card.schedulerData, stability: 'x' } }),
+    ).toBe(false);
+    expect(
+      scheduler.isValidCard({ ...card, schedulerData: { ...card.schedulerData, state: 42 } }),
+    ).toBe(false);
+    expect(scheduler.isValidCard({ ...card, state: 'review' })).toBe(false);
+  });
 });

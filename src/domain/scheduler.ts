@@ -4,6 +4,8 @@ import type { Card, CardState, Rating } from './types';
 export interface Scheduler {
   createCard(wordId: string, now: Date): Card;
   review(card: Card, rating: Rating, now: Date): Card;
+  /** True when `card.schedulerData` is internally consistent and can be reviewed safely. */
+  isValidCard(card: Card): boolean;
 }
 
 const RATING_MAP: Record<
@@ -33,6 +35,15 @@ export class FsrsScheduler implements Scheduler {
 
   createCard(wordId: string, now: Date): Card {
     return toCard(wordId, createEmptyCard(now));
+  }
+
+  isValidCard(card: Card): boolean {
+    const d = card.schedulerData;
+    const nonNegative = (v: unknown) => typeof v === 'number' && Number.isFinite(v) && v >= 0;
+    const fields = ['stability', 'difficulty', 'elapsed_days', 'scheduled_days', 'learning_steps'];
+    if (!fields.every((f) => nonNegative(d[f]))) return false;
+    const state = d.state as State;
+    return state in STATE_MAP && STATE_MAP[state] === card.state;
   }
 
   review(card: Card, rating: Rating, now: Date): Card {
