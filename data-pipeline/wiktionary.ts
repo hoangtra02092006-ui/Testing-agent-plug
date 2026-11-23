@@ -159,6 +159,8 @@ export function cleanWikitext(text: string): string {
     .replace(/&quot;/g, '"')
     .replace(/\s+/g, ' ')
     .replace(/\s+([,.;:!?)])/g, '$1')
+    .replace(/\s*\(?See (?:Appendix:|Usage notes)[^)]*\)?\.?/g, '')
+    .replace(/\s*\[[^\]]*\]/g, '')
     .replace(/\(\s*\)/g, '')
     .replace(/;\s*\./g, '.')
     .trim();
@@ -175,9 +177,30 @@ function labelsOf(line: string): string[] {
   return labels;
 }
 
+/** Longer examples are hard to read on a flashcard. */
+export const MAX_EXAMPLE_WORDS = 20;
+
+/**
+ * Definitions that only name a grammatical form ("Inflection of be", "Plural of that") give the
+ * learner no meaning, so such senses are treated as having no definition.
+ */
+const FORM_OF =
+  /^(?:inflection|plural|past tense|past participle|present participle|simple past|superlative|comparative|third-person singular[\w ]*|form|alternative form|alternative spelling|obsolete form|archaic form|nonstandard form) of\b/i;
+
+export function isFormOnly(definition: string): boolean {
+  return FORM_OF.test(definition);
+}
+
 /** A learner example must be a full sentence, not a phrase such as "College of Engineering". */
 export function isSentence(text: string): boolean {
-  return /^["“‘(]?[A-Z0-9]/.test(text) && /[.!?]["”’)]?$/.test(text) && text.split(' ').length >= 3;
+  const words = text.split(' ').length;
+  return (
+    /^["“‘(]?[A-Z0-9]/.test(text) &&
+    /[.!?]["”’)]?$/.test(text) &&
+    words >= 3 &&
+    words <= MAX_EXAMPLE_WORDS &&
+    !text.includes('~')
+  );
 }
 
 /** Text of a usage-example line "#: {{ux|en|...}}" or "#: ''...''"; undefined for other lines. */
@@ -201,7 +224,12 @@ export function parseEnglishSenses(wikitext: string): WiktSense[] {
   if (start < 0) return [];
   const rest = wikitext.slice(start + 1);
   const end = rest.search(/^==[^=]/m);
-  const english = end < 0 ? rest : rest.slice(0, end);
+  // Maintenance templates such as {{rfc|...}} can span lines and hold numbered lists; drop them so
+  // their "# ..." lines are not read as senses.
+  const english = (end < 0 ? rest : rest.slice(0, end)).replace(
+    /\{\{(?:rfc|rfd|rfv|rfe|attention|tea room|rfquote)[^{}]*\}\}/gi,
+    '',
+  );
 
   const senses: WiktSense[] = [];
   let pos = '';
@@ -229,8 +257,13 @@ export function parseEnglishSenses(wikitext: string): WiktSense[] {
       stack = stack.filter((o) => o.depth < depth);
       for (const open of stack) if (open.depth === depth - 1) open.children += 1;
       stack.push({ depth, sense, children: 0 });
-      // A definition ending in ":" only introduces its sub-senses.
-      if (/[A-Za-z]{2}/.test(sense.definition) && !sense.definition.endsWith(':'))
+      // A definition ending in ":" only introduces its sub-senses; a bare grammatical form
+      // ("Inflection of be") gives no meaning.
+      if (
+        /[A-Za-z]{2}/.test(sense.definition) &&
+        !sense.definition.endsWith(':') &&
+        !isFormOnly(sense.definition)
+      )
         senses.push(sense);
       continue;
     }
@@ -285,12 +318,14 @@ export function overlap(reference: string, definition: string): number {
 
 /** Below this share of shared wording, a Wiktionary sense is not taken as the WordNet meaning. */
 export const MIN_OVERLAP = 0.25;
+/** Senses scoring within this of the best one count as equally close; the earliest wins. */
+export const CLOSE_MARGIN = 0.15;
 
 /**
  * The sense a learner should get as the main meaning.
- * - With a `reference` (the WordNet primary definition, which is ordered by frequency): the
- *   allowed sense with examples whose wording is closest to it, so the common meaning is kept even
- *   though Wiktionary orders senses by history.
+ * - With a `reference` (the WordNet primary definition, which is ordered by frequency): among
+ *   allowed senses with examples, the earliest whose wording is about as close to it as the best
+ *   one; none if no sense is close (Wiktionary orders senses by history).
  * - Without one (WordNet has no entry, mostly function words): the first allowed sense.
  * Allowed = matching part of speech and no old, rare, specialist or offensive label.
  */
@@ -304,15 +339,14 @@ export function primaryWiktSense(
     (s) => headings.includes(s.pos) && !s.labels.some((l) => SKIPPED_LABELS.has(l)),
   );
   if (!reference) return allowed[0];
-  let best: WiktSense | undefined;
-  let bestScore = MIN_OVERLAP;
-  for (const sense of allowed) {
-    if (sense.examples.length + sense.subSenseExamples.length === 0) continue;
-    const score = overlap(reference, sense.definition);
-    if (score >= bestScore && (!best || score > bestScore)) {
-      best = sense;
-      bestScore = score;
-    }
-  }
-  return best;
+  // Score senses with examples by shared wording with WordNet, then take the earliest sense that
+  // scores close to the best one: a slightly better score from a narrower, later sense ("arm" from
+  // shoulder to elbow) should not beat the first sense, but a clearly better match should
+  // ("chicken" the bird over the dare game listed first).
+  const scored = allowed
+    .filter((s) => s.examples.length + s.subSenseExamples.length > 0)
+    .map((sense) => ({ sense, score: overlap(reference, sense.definition) }));
+  const best = Math.max(0, ...scored.map((s) => s.score));
+  if (best < MIN_OVERLAP) return undefined;
+  return scored.find((s) => s.score >= Math.max(MIN_OVERLAP, best - CLOSE_MARGIN))?.sense;
 }

@@ -44,7 +44,7 @@
 - Build tĩnh, Trang bấm deploy production. Lùi: deploy lại bản build trước.
 
 ## Dữ liệu và giấy phép
-- CEFR-J Vocabulary Profile 1.5 (ghi nguồn bắt buộc), Octanove Vocabulary Profile C1/C2 1.0 (CC BY-SA 4.0), Open English WordNet 2024 (định nghĩa, ví dụ; CC BY 4.0), Wiktionary tiếng Anh (định nghĩa, ví dụ cho từ WordNet thiếu; CC BY-SA 4.0). File `public/words/*.json` dẫn xuất từ Octanove phải giữ CC BY-SA 4.0.
+- CEFR-J Vocabulary Profile 1.5 (ghi nguồn bắt buộc), Octanove Vocabulary Profile C1/C2 1.0 (CC BY-SA 4.0), Open English WordNet 2024 (định nghĩa, ví dụ; CC BY 4.0), Wiktionary tiếng Anh (định nghĩa, ví dụ cho từ WordNet thiếu; CC BY-SA 4.0). Mọi file `public/words/*.json` có nội dung từ Octanove hoặc Wiktionary phải giữ CC BY-SA 4.0 (A1 đã có nội dung Wiktionary).
 
 ## Luật cứng riêng
 - Chưa có.

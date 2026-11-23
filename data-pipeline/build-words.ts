@@ -126,13 +126,16 @@ async function wiktionaryPages(titles: string[]): Promise<Map<string, string>> {
       const res = await fetch(`${WIKTIONARY_API}?${params}`, {
         headers: { 'User-Agent': USER_AGENT },
       });
-      if (res.ok) {
-        const data = (await res.json()) as {
-          query: {
-            normalized?: { from: string; to: string }[];
-            pages: { title: string; revisions?: { slots: { main: { content: string } } }[] }[];
-          };
-        };
+      const data = res.ok
+        ? ((await res.json()) as {
+            error?: { code: string };
+            query?: {
+              normalized?: { from: string; to: string }[];
+              pages: { title: string; revisions?: { slots: { main: { content: string } } }[] }[];
+            };
+          })
+        : undefined;
+      if (data?.query) {
         const byTitle = new Map(data.query.pages.map((p) => [p.title, p]));
         const normalized = new Map((data.query.normalized ?? []).map((n) => [n.from, n.to]));
         for (const title of batch) {
@@ -143,13 +146,15 @@ async function wiktionaryPages(titles: string[]): Promise<Map<string, string>> {
         console.log(`Wiktionary: ${Math.min(i + 50, todo.length)}/${todo.length} pages`);
         break;
       }
-      if (res.status !== 429 || attempt >= 12) {
-        throw new Error(
-          `Wiktionary request failed (HTTP ${res.status}). Run again later to resume.`,
-        );
+      // Busy server: rate limit (429), unavailable (503) or replication lag (200 + maxlag error).
+      const busy = res.status === 429 || res.status === 503 || data?.error?.code === 'maxlag';
+      if (!busy || attempt >= 12) {
+        const why = data?.error?.code ?? `HTTP ${res.status}`;
+        throw new Error(`Wiktionary request failed (${why}). Run again later to resume.`);
       }
-      const wait = 20_000 * attempt;
-      console.log(`Wiktionary rate limit, waiting ${wait / 1000}s (attempt ${attempt})`);
+      const retryAfter = Number(res.headers.get('retry-after'));
+      const wait = Math.max(20_000 * attempt, Number.isFinite(retryAfter) ? retryAfter * 1000 : 0);
+      console.log(`Wiktionary busy, waiting ${wait / 1000}s (attempt ${attempt})`);
       await sleep(wait);
     }
     await sleep(2_000);
@@ -187,9 +192,12 @@ async function main() {
       `# Data report ${level}`,
       `Source entries: ${levelRows.length}. Included: ${words.length} (${words.length - fromWiktionary.length} from WordNet, ${fromWiktionary.length} from Wiktionary). Missing: ${missing.length}.`,
       '',
-      'WordNet is used first. A word WordNet cannot give is taken from Wiktionary under the same rules:',
-      'its first sense that is not obsolete, archaic, rare, dated, slang, offensive or specialist,',
-      "with that sense's own usage examples (book quotations are not used).",
+      'WordNet is used first. A word WordNet cannot give is taken from Wiktionary under the same rules.',
+      'Only senses without an obsolete, archaic, rare, dated, slang, offensive or specialist label count,',
+      'and only full-sentence usage examples of that sense (no book quotations, at most 20 words).',
+      'When WordNet has a definition, the Wiktionary sense must share its wording: among senses about',
+      'as close as the best match, the earliest is used; with no close sense the word stays missing.',
+      'Senses that only name a grammatical form ("Inflection of be") have no definition.',
       '',
       'Reasons:',
       '- no-definition: Open English WordNet has no entry for this word and part of speech',

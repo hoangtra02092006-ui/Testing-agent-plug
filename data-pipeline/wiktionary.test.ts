@@ -1,5 +1,6 @@
 import {
   cleanWikitext,
+  isFormOnly,
   isSentence,
   overlap,
   parseEnglishSenses,
@@ -36,6 +37,12 @@ describe('cleanWikitext', () => {
     ['{{infl of|en|be||3|s|pres}}', 'Inflection of be'],
     ['An example of (something); {{ng|the article}}.', 'An example of (something); the article.'],
     ['meet between two and three&emsp;&emsp;later', 'Meet between two and three later'],
+    ['Possessive determiner. See Appendix:Possessive#English.', 'Possessive determiner.'],
+    ['Between two things (See Usage notes below.)', 'Between two things'],
+    [
+      'Dogs salivate when [i.e. at any time that] they hear a bell.',
+      'Dogs salivate when they hear a bell.',
+    ],
   ])('%s → %s', (input, expected) => {
     expect(cleanWikitext(input)).toBe(expected);
   });
@@ -132,6 +139,8 @@ describe('isSentence', () => {
     ['College of Engineering', false],
     ['no contest', false],
     ['Hi!', false],
+    ['We should buy a house. ~ With whose money?', false],
+    [`${'Word '.repeat(20)}end.`, false],
   ])('isSentence(%s) = %s', (text, expected) => {
     expect(isSentence(text)).toBe(expected);
   });
@@ -162,5 +171,56 @@ describe('primaryWiktSense with a WordNet reference', () => {
   it('takes nothing when no sense is close enough', () => {
     expect(primaryWiktSense(senses, 'noun', 'an electronic computing machine')).toBeUndefined();
     expect(overlap('', 'anything')).toBe(0);
+  });
+});
+
+describe('isFormOnly', () => {
+  it.each([
+    ['Inflection of be', true],
+    ['Plural of that', true],
+    ['Past tense of will; usually followed by a bare infinitive.', true],
+    ['Superlative of much.', true],
+    ['Initialism of compact disc.', false],
+    ['A form of address for a woman.', false],
+  ])('isFormOnly(%s) = %s', (text, expected) => {
+    expect(isFormOnly(text)).toBe(expected);
+  });
+
+  it('drops such senses and maintenance-template lists when parsing', () => {
+    const senses = parseEnglishSenses(
+      page(
+        [
+          '===Verb===',
+          '{{rfc|en|Multiple issues:',
+          '# Correct quotes',
+          '# Fix layout}}',
+          '# {{infl of|en|be||3|s|pres}}',
+          '#: {{ux|en|He is a doctor.}}',
+          '# To exist.',
+        ].join('\n'),
+      ),
+    );
+    expect(senses.map((s) => s.definition)).toEqual(['To exist.']);
+  });
+});
+
+describe('primaryWiktSense picks the earliest of the closest senses', () => {
+  const senses = parseEnglishSenses(
+    page(
+      [
+        '===Noun===',
+        '# The upper limb from the shoulder to the wrist.',
+        '#: {{ux|en|She raised her arm.}}',
+        '# The upper limb from the shoulder to the elbow only.',
+        '#: {{ux|en|The arm and forearm differ.}}',
+      ].join('\n'),
+    ),
+  );
+
+  it('keeps the first sense when a later one is only slightly closer', () => {
+    const ref = 'an upper limb with shoulder, elbow, joint, bone and muscle';
+    expect(primaryWiktSense(senses, 'noun', ref)?.definition).toBe(
+      'The upper limb from the shoulder to the wrist.',
+    );
   });
 });

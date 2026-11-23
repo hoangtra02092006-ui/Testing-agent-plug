@@ -165,6 +165,8 @@ const SENSITIVE_STEMS = [
   'corpse',
   'torture',
   'stab',
+  'bullet',
+  'alcoholic',
   'beer',
   'wine',
   'alcohol',
