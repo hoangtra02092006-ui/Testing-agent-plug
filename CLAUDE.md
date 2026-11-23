@@ -1,7 +1,7 @@
 # English Vocabulary Trainer (web học từ vựng)
 
 > Dự án dùng plugin `bo-chuan-trang`. Quy trình chung theo plugin; file này chỉ chứa phần riêng của dự án.
-> Công nghệ đã duyệt (Cổng 1, 23/11). Lệnh chưa chạy thử vì repo chưa có code.
+> Công nghệ đã duyệt (Cổng 1, 23/11). Lệnh test/lint/typecheck đã chạy thử 23/11; dev/build chạy được khi có giao diện.
 
 ## Tổng quan
 - Web giúp học sinh, sinh viên học từ vựng tiếng Anh theo mức CEFR A1–C2 bằng ôn ngắt quãng và tự nhớ. Giao diện VI/EN.
@@ -14,16 +14,16 @@
 - Phát âm: Web Speech API
 - Hạ tầng: hosting tĩnh (chưa chọn: Cloudflare Pages / Vercel / Netlify)
 
-## Lệnh (dự kiến, chạy thử sau khi dựng khung)
+## Lệnh
 | Việc | Lệnh |
 |---|---|
 | Cài đặt | `npm install` |
 | Chạy local | `npm run dev` |
 | Test | `npm test` (Vitest) |
 | Đo độ phủ (logic `src/domain`, ngưỡng > 80%) | `npm run test:coverage` |
-| Lint / format | `npm run lint` · `npm run format` |
+| Lint / format / kiểu | `npm run lint` · `npm run format` · `npm run typecheck` |
 | Build | `npm run build` |
-| Dựng dữ liệu từ | `npm run data:build` (script trong `data-pipeline/`) |
+| Dựng dữ liệu từ | `npm run data:build` (chưa có, làm ở bước dữ liệu) |
 
 ## Kiến trúc
 - `src/domain/` logic thuần (lịch ôn, phiên học, thống kê), không import React hay Dexie.
