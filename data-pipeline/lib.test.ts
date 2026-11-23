@@ -174,6 +174,54 @@ describe('buildWords', () => {
     ]);
   });
 
+  it('falls back to the Wiktionary primary sense when WordNet has no usable one', () => {
+    const wiktionary = new Map([
+      [
+        'cat',
+        '==English==\n===Noun===\n# {{lb|en|archaic}} A whip.\n# A small feline mammal kept as a pet.\n#: {{ux|en|The cat sleeps.}}',
+      ],
+      [
+        'the',
+        '==English==\n===Article===\n# Used before a noun.\n#: {{ux|en|Kill the drug dealer.}}',
+      ],
+    ]);
+    const result = buildWords(
+      [row('cat'), row('the', 'determiner')],
+      entries,
+      synsets,
+      2,
+      wiktionary,
+    );
+    expect(result.words).toEqual([
+      {
+        id: 'a1:cat:noun',
+        headword: 'cat',
+        pos: 'noun',
+        level: 'A1',
+        definitionEn: 'A small feline mammal kept as a pet.',
+        examples: ['The cat sleeps.'],
+      },
+    ]);
+    expect(result.fromWiktionary).toEqual(['a1:cat:noun']);
+    expect(result.missing).toEqual([
+      { headword: 'the', pos: 'determiner', reason: 'no-definition' },
+    ]);
+  });
+
+  it('reports a Wiktionary choice that was rejected in review', () => {
+    const wiktionary = new Map([
+      [
+        'cat',
+        '==English==\n===Noun===\n# A small feline mammal kept as a pet.\n#: {{ux|en|The cat sleeps.}}',
+      ],
+    ]);
+    const result = buildWords([row('cat')], entries, synsets, 2, wiktionary, new Set(['cat|noun']));
+    expect(result.words).toEqual([]);
+    expect(result.missing).toEqual([
+      { headword: 'cat', pos: 'noun', reason: 'rejected-in-review' },
+    ]);
+  });
+
   it('skips duplicated rows', () => {
     expect(
       buildWords([row('swim', 'verb'), row('swim', 'verb')], entries, synsets).words,
@@ -221,5 +269,16 @@ describe('generated A1 file', () => {
         .map((text) => `${w.id}: ${text}`),
     );
     expect(flagged).toEqual([]);
+  });
+
+  it('matches the word count stated on the About page', async () => {
+    const { readFileSync } = await import('node:fs');
+    const words: Word[] = JSON.parse(readFileSync('public/words/A1.json', 'utf8'));
+    for (const lang of ['vi', 'en']) {
+      const about: string = JSON.parse(readFileSync(`src/i18n/${lang}.json`, 'utf8'))[
+        'about.missing'
+      ];
+      expect(about, lang).toContain(`${words.length}`);
+    }
   });
 });

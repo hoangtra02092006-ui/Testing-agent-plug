@@ -1,0 +1,42 @@
+/**
+ * Wiktionary choices read by hand and rejected (key: "headword|part of speech").
+ * The automatic rules (allowed labels, closest wording to WordNet, full-sentence examples) get most
+ * words right, but Wiktionary orders senses by history and some examples are odd for learners.
+ * A rejected word is reported as missing rather than shown with a wrong or unsuitable entry.
+ * Re-read the "Words from Wiktionary" list in the data report after every rebuild.
+ */
+export const REJECTED_WIKTIONARY: Record<string, string> = {
+  'about|preposition': 'spatial sense ("coiled about his ankle"), not the common "concerning"',
+  'above|preposition': 'odd example (coat "above" a sweater)',
+  'an|determiner': 'form-of entry without a definition',
+  'bathroom|noun': 'example is a remark about British vs American usage',
+  'bear|noun': 'example about eating bear meat',
+  'but|conjunction': 'example comments on an old woman being attractive',
+  'chicken|noun': 'picked the dare game, not the bird',
+  'code|noun': 'legal "code of rules" sense, not the common one',
+  'coke|noun': 'coal residue; learners mean the drink',
+  'describe|verb': 'geometry sense',
+  'exercise|verb': 'legal "exercise an option" sense',
+  'for|preposition': '"towards" sense, not the common "intended for"',
+  'future|noun': 'figurative "goodness to come" sense',
+  'grade|noun': '"a student of a grade" sense',
+  'like|preposition': 'archaic example ("Folk like that I just can\'t brook")',
+  'lunch|noun': 'funeral-meal sense and example',
+  'mommy|noun': 'adult relationship sense, unsuitable',
+  'of|preposition': '"distance or motion" sense, not possession',
+  'or|conjunction': 'example about getting cancer',
+  'ride|noun': 'slang "vehicle" sense',
+  'sea|noun': 'example is a list, not a sentence',
+  'should|modal auxiliary': 'archaic first-person future example',
+  'that|pronoun': 'example has a spelling mistake ("Thats")',
+  'those|pronoun': 'garbled example sentence',
+  'war|noun': 'terrorism sense and example',
+  'was|be-verb': 'odd example ("castigated and scorned")',
+  'water|noun': 'chemistry example',
+  'does|do-verb': 'odd word order in the example ("Likes her tea, my mom does.")',
+  'we|pronoun': 'example about an arrest',
+  'what|pronoun': 'fragment example ("What with?")',
+  'where|conjunction': '"whereas" sense',
+  'who|pronoun': 'fragment example with an interrobang',
+  'with|preposition': '"against" sense, not the common "together with"',
+};

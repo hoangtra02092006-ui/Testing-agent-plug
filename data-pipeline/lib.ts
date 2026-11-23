@@ -3,6 +3,8 @@
  * Kept free of I/O so they can be unit tested.
  */
 import type { CefrLevel, Word } from '../src/domain/types';
+import { REJECTED_WIKTIONARY } from './review-wiktionary';
+import { parseEnglishSenses, primaryWiktSense } from './wiktionary';
 
 export interface ProfileRow {
   headword: string;
@@ -21,13 +23,15 @@ export interface LexEntry {
   synsetIds: string[];
 }
 
-export type MissingReason = 'no-definition' | 'no-example' | 'sensitive';
+export type MissingReason = 'no-definition' | 'no-example' | 'sensitive' | 'rejected-in-review';
 
 export interface BuildResult {
   words: Word[];
   missing: { headword: string; pos: string; reason: MissingReason }[];
   /** Examples left out as unsuitable for school learners. */
   droppedExamples: { headword: string; example: string }[];
+  /** Ids of words whose definition and examples come from Wiktionary. */
+  fromWiktionary: string[];
 }
 
 /** Minimal RFC 4180 CSV parser (quoted fields, escaped quotes, CRLF). */
@@ -160,6 +164,16 @@ const SENSITIVE_STEMS = [
   'shot',
   'corpse',
   'torture',
+  'stab',
+  'beer',
+  'wine',
+  'alcohol',
+  'drunk',
+  'whisky',
+  'whiskey',
+  'vodka',
+  'cigarette',
+  'communist',
 ];
 /** Phrases that are harmless word by word but not suitable together. */
 const SENSITIVE_PHRASES = [/sells? (her|his|their) body/i, /make love/i];
@@ -186,22 +200,46 @@ export function isSensitive(text: string, headword = ''): boolean {
   return SENSITIVE_STEMS.some((stem) => stem !== own && exampleUsesWord(text, stem));
 }
 
+type Choice = { definition: string; examples: string[] } | { reason: MissingReason };
+
+/** Keeps a sense only with a suitable definition and at least one suitable example using the word. */
+function choose(
+  headword: string,
+  definition: string | undefined,
+  candidates: string[],
+  dropped: BuildResult['droppedExamples'],
+  maxExamples: number,
+): Choice {
+  if (!definition) return { reason: 'no-definition' };
+  const usable = [...new Set(candidates.filter((ex) => exampleUsesWord(ex, headword)))];
+  if (usable.length === 0) return { reason: 'no-example' };
+  const examples = usable.filter((ex) => !isSensitive(ex, headword));
+  for (const ex of usable) if (!examples.includes(ex)) dropped.push({ headword, example: ex });
+  if (isSensitive(definition, headword) || examples.length === 0) return { reason: 'sensitive' };
+  return { definition, examples: examples.slice(0, maxExamples) };
+}
+
 /**
  * Uses the primary sense only: the first WordNet sense of a matching part of speech, which is the
  * most frequent meaning and the one a learner at this level needs. Examples come from that same
- * sense. When it has no usable example the word is reported, never filled from a rarer sense.
- * The lemma is matched with its exact casing so "cat" never picks up "CAT" (the scan) and "day"
- * never picks up "Day" (the writer).
+ * sense; a word is never filled from a rarer sense. The lemma is matched with its exact casing so
+ * "cat" never picks up "CAT" (the scan) and "day" never picks up "Day" (the writer).
+ *
+ * When WordNet cannot give a word, the Wiktionary entry (if given) is tried the same way: its
+ * first sense that is not old, rare, specialist or offensive, with that sense's own usage examples.
  */
 export function buildWords(
   rows: ProfileRow[],
   entries: Map<string, LexEntry[]>,
   synsets: Map<string, Synset>,
   maxExamples = 2,
+  wiktionary: Map<string, string> = new Map(),
+  rejected: ReadonlySet<string> = new Set(Object.keys(REJECTED_WIKTIONARY)),
 ): BuildResult {
   const words: Word[] = [];
   const missing: BuildResult['missing'] = [];
   const dropped: BuildResult['droppedExamples'] = [];
+  const fromWiktionary: string[] = [];
   const seen = new Set<string>();
 
   for (const row of rows) {
@@ -216,21 +254,35 @@ export function buildWords(
       .flatMap((e) => e.synsetIds)
       .map((sid) => synsets.get(sid))
       .find((s): s is Synset => Boolean(s?.definition));
+    let choice = choose(
+      headword,
+      primary?.definition,
+      primary?.examples ?? [],
+      dropped,
+      maxExamples,
+    );
 
-    const report = (reason: MissingReason) => missing.push({ headword, pos: row.pos, reason });
-    if (!primary) {
-      report('no-definition');
-      continue;
+    const page = wiktionary.get(headword);
+    if ('reason' in choice && page) {
+      const sense = primaryWiktSense(parseEnglishSenses(page), row.pos, primary?.definition);
+      const fallback = choose(
+        headword,
+        sense?.definition,
+        sense ? [...sense.examples, ...sense.subSenseExamples] : [],
+        dropped,
+        maxExamples,
+      );
+      if (!('reason' in fallback)) {
+        if (rejected.has(`${headword}|${row.pos}`)) {
+          choice = { reason: 'rejected-in-review' };
+        } else {
+          choice = fallback;
+          fromWiktionary.push(id);
+        }
+      }
     }
-    const usable = primary.examples.filter((ex) => exampleUsesWord(ex, headword));
-    if (usable.length === 0) {
-      report('no-example');
-      continue;
-    }
-    const examples = usable.filter((ex) => !isSensitive(ex, headword));
-    for (const ex of usable) if (!examples.includes(ex)) dropped.push({ headword, example: ex });
-    if (isSensitive(primary.definition!, headword) || examples.length === 0) {
-      report('sensitive');
+    if ('reason' in choice) {
+      missing.push({ headword, pos: row.pos, reason: choice.reason });
       continue;
     }
     words.push({
@@ -238,11 +290,11 @@ export function buildWords(
       headword,
       pos: row.pos,
       level: row.level,
-      definitionEn: primary.definition!,
-      examples: examples.slice(0, maxExamples),
+      definitionEn: choice.definition,
+      examples: choice.examples,
     });
   }
-  return { words, missing, droppedExamples: dropped };
+  return { words, missing, droppedExamples: dropped, fromWiktionary };
 }
 
 /** AC11 check: every word has a definition and at least one example containing the word. */

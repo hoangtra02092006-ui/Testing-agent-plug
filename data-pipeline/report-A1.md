@@ -1,5 +1,9 @@
 # Data report A1
-Source entries: 1164. Included: 539. Missing: 625.
+Source entries: 1164. Included: 777 (538 from WordNet, 239 from Wiktionary). Missing: 387.
+
+WordNet is used first. A word WordNet cannot give is taken from Wiktionary under the same rules:
+its first sense that is not obsolete, archaic, rare, dated, slang, offensive or specialist,
+with that sense's own usage examples (book quotations are not used).
 
 Reasons:
 - no-definition: Open English WordNet has no entry for this word and part of speech
@@ -7,20 +11,34 @@ Reasons:
 - no-example: the primary (most common) sense has no example sentence containing the word.
   Rarer senses are never used instead, so the meaning shown is always the common one.
 - sensitive: the definition or every example is unsuitable for school learners.
+- rejected-in-review: the Wiktionary entry was read by hand and rejected
+  (wrong meaning or odd example); see data-pipeline/review-wiktionary.ts.
 
-A fallback source of definitions and examples (the design names Wiktionary) is not built yet;
-the missing words wait for that decision.
+Reasons below are the WordNet ones; these words had no usable Wiktionary sense either.
+
+## Words from Wiktionary
+
+a1:a:determiner, a1:after:preposition, a1:all:determiner, a1:all:pronoun, a1:also:adverb, a1:another:determiner, a1:any:determiner, a1:any:pronoun, a1:anybody:pronoun, a1:anyone:pronoun, a1:anything:pronoun, a1:are:be-verb, a1:arm:noun, a1:around:preposition, a1:as:preposition, a1:at:preposition, a1:bar:noun, a1:basketball:noun, a1:bean:noun, a1:because:conjunction, a1:bedroom:noun, a1:beef:noun, a1:before:preposition, a1:begin:verb, a1:behind:preposition, a1:below:adverb, a1:below:preposition, a1:between:preposition, a1:bird:noun, a1:birthday:noun, a1:boat:noun, a1:both:determiner, a1:both:pronoun, a1:bottom:noun, a1:bread:noun, a1:breakfast:noun, a1:by:preposition, a1:can:modal-auxiliary, a1:cap:noun, a1:chocolate:noun, a1:church:noun, a1:classmate:noun, a1:clock:noun, a1:collect:verb, a1:computer:noun, a1:conversation:noun, a1:cook:noun, a1:could:modal-auxiliary, a1:cow:noun, a1:dictionary:noun, a1:did:do-verb, a1:do:do-verb, a1:drama:noun, a1:dress:noun, a1:driver:noun, a1:drum:noun, a1:each:determiner, a1:each:pronoun, a1:egg:noun, a1:else:adverb, a1:enjoy:verb, a1:every:determiner, a1:everybody:pronoun, a1:everything:pronoun, a1:eye:noun, a1:fan:noun, a1:feed:noun, a1:fever:noun, a1:fight:noun, a1:fishing:noun, a1:flag:noun, a1:flower:noun, a1:football:noun, a1:forget:verb, a1:four:number, a1:from:preposition, a1:fun:adjective, a1:gift:noun, a1:glass:noun, a1:good-morning:interjection, a1:guest:noun, a1:guitar:noun, a1:had:have-verb, a1:have:have-verb, a1:have-to:modal-auxiliary, a1:he:pronoun, a1:hear:verb, a1:hers:pronoun, a1:hi:interjection, a1:his:pronoun, a1:hobby:noun, a1:hole:noun, a1:hospital:noun, a1:how:adverb, a1:hurt:verb, a1:husband:noun, a1:i:pronoun, a1:ice-cream:noun, a1:if:conjunction, a1:imagine:verb, a1:in:preposition, a1:inside:preposition, a1:into:preposition, a1:is:be-verb, a1:it:pronoun, a1:join:verb, a1:juice:noun, a1:key:noun, a1:kick:verb, a1:king:noun, a1:kitchen:noun, a1:knee:noun, a1:knife:noun, a1:laugh:verb, a1:leg:noun, a1:mail:noun, a1:many:determiner, a1:many:pronoun, a1:map:noun, a1:may:modal-auxiliary, a1:me:pronoun, a1:meal:noun, a1:milk:noun, a1:mine:pronoun, a1:miss:noun, a1:more:determiner, a1:more:pronoun, a1:most:determiner, a1:much:determiner, a1:much:pronoun, a1:musician:noun, a1:must:modal-auxiliary, a1:my:determiner, a1:near:preposition, a1:need:modal-auxiliary, a1:night:noun, a1:no:determiner, a1:nothing:pronoun, a1:ok:adjective, a1:on:preposition, a1:one:determiner, a1:other:determiner, a1:our:determiner, a1:ours:pronoun, a1:over:preposition, a1:paper:noun, a1:paragraph:noun, a1:peace:noun, a1:pet:noun, a1:phone:verb, a1:piano:noun, a1:picnic:noun, a1:player:noun, a1:pollution:noun, a1:rabbit:noun, a1:rain:noun, a1:repeat:verb, a1:review:noun, a1:ring:verb, a1:sailor:noun, a1:salad:noun, a1:same:adverb, a1:same:pronoun, a1:save:verb, a1:sell:verb, a1:she:pronoun, a1:shelf:noun, a1:shirt:noun, a1:shoe:noun, a1:shoulder:noun, a1:singer:noun, a1:sit:verb, a1:skill:noun, a1:sky:noun, a1:smile:noun, a1:snow:noun, a1:so:conjunction, a1:sofa:noun, a1:some:determiner, a1:some:pronoun, a1:someone:pronoun, a1:something:pronoun, a1:soup:noun, a1:speak:verb, a1:straight:adverb, a1:student:noun, a1:sunshine:noun, a1:supermarket:noun, a1:swimming-pool:noun, a1:teach:verb, a1:team:noun, a1:than:conjunction, a1:than:preposition, a1:thank:verb, a1:thanks:noun, a1:that:conjunction, a1:that:determiner, a1:the:determiner, a1:them:pronoun, a1:they:pronoun, a1:thirteen:number, a1:this:determiner, a1:this:pronoun, a1:those:determiner, a1:through:preposition, a1:to:infinitive-to, a1:to:preposition, a1:toilet:noun, a1:tomato:noun, a1:towel:noun, a1:tree:noun, a1:truck:noun, a1:twelve:number, a1:under:preposition, a1:until:preposition, a1:up:preposition, a1:us:pronoun, a1:waiter:noun, a1:wash:verb, a1:watch:noun, a1:welcome:interjection, a1:what:determiner, a1:when:adverb, a1:when:conjunction, a1:where:adverb, a1:which:determiner, a1:which:pronoun, a1:whose:determiner, a1:whose:pronoun, a1:why:adverb, a1:will:modal-auxiliary, a1:window:noun, a1:wonderful:adjective, a1:would:modal-auxiliary, a1:you:pronoun, a1:your:determiner, a1:yours:pronoun, a1:yourself:pronoun, a1:zoo:noun
 
 ## Examples left out as unsuitable
 
 - action: "there were stories of murders and other unnatural actions"
+- after: "We had a few beers after the game."
 - bar: "he drowned his sorrows in whiskey at the bar"
+- bottle: "Beer is often sold in bottles."
+- cold: "a cold beer"
 - cream: "the cream of England's young men were killed in the Great War"
 - everywhere: "he carried a gun everywhere he went"
 - fat: "he hadn't remembered how fat she was"
+- grape: "Grapes give us whole-fruit snacks, grape juice, raisins, wine, and more."
+- if: "Fetch me a cold beer if there's one in the fridge."
+- into: "Pour the wine into the decanter."
+- join: "He joined the Communist Party as a young man"
 - kill: "This man killed several people when he tried to rob a bank"
 - make: "make love, not war"
+- meat: "The homesteading teenager shot a deer to supply his family with wild meat for the winter."
 - sell: "She sells her body to survive and support her drug habit"
+- she: "After the cat killed a mouse, she left it on our doorstep."
 - smoking: "smoking stinks"
 - war: "thousands of people were killed in the war"
 - woman: "the woman kept house while the man hunted"
@@ -29,99 +47,60 @@ the missing words wait for that decision.
 
 | Headword | Part of speech | Reason |
 |---|---|---|
-| a | determiner | no-definition |
-| about | preposition | no-definition |
-| above | preposition | no-definition |
+| about | preposition | rejected-in-review |
+| above | preposition | rejected-in-review |
 | action | noun | sensitive |
 | actor | noun | no-example |
 | address | noun | no-example |
-| after | preposition | no-definition |
 | airport | noun | no-example |
 | album | noun | no-example |
-| all | determiner | no-definition |
-| all | pronoun | no-definition |
 | all right | adverb | no-example |
-| also | adverb | no-example |
 | am | be-verb | no-definition |
-| an | determiner | no-definition |
+| an | determiner | rejected-in-review |
 | and | conjunction | no-definition |
 | animal | noun | no-example |
-| another | determiner | no-definition |
-| any | determiner | no-definition |
-| any | pronoun | no-definition |
-| anybody | pronoun | no-definition |
-| anyone | pronoun | no-definition |
-| anything | pronoun | no-definition |
 | apple | noun | no-example |
 | April | noun | no-example |
 | apron | noun | no-example |
-| are | be-verb | no-definition |
-| arm | noun | no-example |
-| around | preposition | no-definition |
 | article | noun | no-example |
-| as | preposition | no-definition |
-| at | preposition | no-definition |
 | August | noun | no-example |
 | aunt | noun | no-example |
 | autumn | noun | no-example |
 | banana | noun | no-example |
 | band | noun | no-example |
-| bar | noun | sensitive |
-| basketball | noun | no-example |
 | bat | noun | no-example |
-| bathroom | noun | no-example |
+| bathroom | noun | rejected-in-review |
 | be | be-verb | no-definition |
 | beach | noun | no-example |
-| bean | noun | no-example |
-| bear | noun | no-example |
-| because | conjunction | no-definition |
+| bear | noun | rejected-in-review |
 | become | verb | no-example |
-| bedroom | noun | no-example |
 | bee | noun | no-example |
-| beef | noun | no-example |
-| before | preposition | no-definition |
-| begin | verb | no-example |
-| behind | preposition | no-definition |
 | bell | noun | no-example |
-| below | adverb | no-example |
-| below | preposition | no-definition |
 | beside | preposition | no-definition |
-| between | preposition | no-definition |
 | bicycle | noun | no-example |
 | bike | noun | no-example |
-| bird | noun | no-example |
-| birthday | noun | no-example |
 | biscuit | noun | no-example |
 | black | noun | no-example |
-| boat | noun | no-example |
 | bone | noun | no-example |
 | bookstore | noun | no-example |
 | both | adverb | no-definition |
-| both | determiner | no-definition |
-| both | pronoun | no-definition |
 | bottle | noun | no-example |
-| bottom | noun | no-example |
 | bowl | noun | no-example |
 | brain | noun | no-example |
-| bread | noun | no-example |
-| breakfast | noun | no-example |
 | bridge | noun | no-example |
 | brown | adjective | no-example |
 | brush | noun | no-example |
 | bucket | noun | no-example |
 | build | verb | no-example |
 | burger | noun | no-example |
-| but | conjunction | no-definition |
+| but | conjunction | rejected-in-review |
 | butter | noun | no-example |
 | butterfly | noun | no-example |
 | button | noun | no-example |
-| by | preposition | no-definition |
 | cafe | noun | no-example |
 | cake | noun | no-example |
 | camera | noun | no-example |
-| can | modal auxiliary | no-definition |
 | candy | noun | no-example |
-| cap | noun | no-example |
 | cartoon | noun | no-example |
 | cat | noun | no-example |
 | catch | verb | no-example |
@@ -129,35 +108,25 @@ the missing words wait for that decision.
 | CD player | noun | no-example |
 | celebration | noun | no-example |
 | cheese | noun | no-example |
-| chicken | noun | no-example |
+| chicken | noun | rejected-in-review |
 | child | noun | no-example |
-| chocolate | noun | no-example |
-| church | noun | no-example |
-| classmate | noun | no-example |
 | classroom | noun | no-example |
 | climb | noun | no-example |
-| clock | noun | no-example |
 | cloud | noun | no-example |
 | coach | noun | no-example |
 | coat | noun | no-example |
-| code | noun | no-example |
-| coke | noun | no-example |
-| collect | verb | no-example |
+| code | noun | rejected-in-review |
+| coke | noun | rejected-in-review |
 | collection | noun | no-example |
 | college | noun | no-example |
-| computer | noun | no-example |
 | concert | noun | no-example |
 | contest | noun | no-example |
-| conversation | noun | no-example |
-| cook | noun | no-example |
 | cookie | noun | no-example |
 | cop | noun | no-example |
 | copy | noun | no-example |
 | corn | noun | no-example |
 | couch | noun | no-example |
-| could | modal auxiliary | no-definition |
 | cousin | noun | no-example |
-| cow | noun | no-example |
 | cream | noun | sensitive |
 | credit card | noun | no-example |
 | cry | noun | no-example |
@@ -168,88 +137,57 @@ the missing words wait for that decision.
 | dancing | noun | no-example |
 | dear | adjective | no-example |
 | December | noun | no-example |
-| describe | verb | no-example |
+| describe | verb | rejected-in-review |
 | desk | noun | no-example |
-| dictionary | noun | no-example |
-| did | do-verb | no-definition |
 | dining room | noun | no-example |
-| do | do-verb | no-definition |
-| does | do-verb | no-definition |
+| does | do-verb | rejected-in-review |
 | doing | do-verb | no-definition |
 | doll | noun | no-example |
 | dollar | noun | no-example |
-| drama | noun | no-example |
-| dress | noun | no-example |
-| driver | noun | no-example |
-| drum | noun | no-example |
 | DVD | noun | no-example |
-| each | determiner | no-definition |
-| each | pronoun | no-definition |
 | each other | pronoun | no-definition |
 | ear | noun | no-example |
-| egg | noun | no-example |
 | eight | number | no-example |
 | eighteen | number | no-example |
 | eighty | number | no-example |
 | eleven | number | no-example |
-| else | adverb | no-definition |
 | email | noun | no-example |
 | engineer | noun | no-example |
-| enjoy | verb | no-example |
 | event | noun | no-example |
-| every | determiner | no-definition |
-| everybody | pronoun | no-definition |
 | everyone | pronoun | no-definition |
-| everything | pronoun | no-definition |
 | excited | adjective | no-example |
-| exercise | verb | no-example |
-| eye | noun | no-example |
+| exercise | verb | rejected-in-review |
 | factory | noun | no-example |
 | fairy | noun | no-example |
-| fan | noun | no-example |
 | farmer | noun | no-example |
 | fat | adjective | sensitive |
 | February | noun | no-example |
-| feed | noun | no-example |
 | feel | verb | no-example |
 | festival | noun | no-example |
-| fever | noun | no-example |
 | fifteen | number | no-example |
 | fifty | number | no-example |
-| fight | noun | no-example |
 | file | noun | no-example |
-| fishing | noun | no-example |
 | five | number | no-example |
-| flag | noun | no-example |
-| flower | noun | no-example |
 | fly | noun | no-example |
 | foggy | adjective | no-example |
 | food | noun | no-example |
-| football | noun | no-example |
-| for | preposition | no-definition |
+| for | preposition | rejected-in-review |
 | foreigner | noun | no-example |
-| forget | verb | no-example |
 | forty | number | no-example |
-| four | number | no-example |
 | fourteen | number | no-example |
 | Friday | noun | no-example |
 | frog | noun | no-example |
-| from | preposition | no-definition |
 | fruit | noun | no-example |
-| fun | adjective | no-definition |
-| future | noun | no-example |
+| future | noun | rejected-in-review |
 | garbage | noun | no-example |
 | garden | noun | no-example |
-| gift | noun | no-example |
 | girl | noun | no-example |
 | give | verb | no-example |
-| glass | noun | no-example |
 | glasses | noun | no-example |
 | goal | noun | no-example |
 | good afternoon | interjection | no-definition |
-| good morning | interjection | no-definition |
 | good night | interjection | no-definition |
-| grade | noun | no-example |
+| grade | noun | rejected-in-review |
 | grammar | noun | no-example |
 | grandfather | noun | no-example |
 | grandma | noun | no-example |
@@ -262,49 +200,24 @@ the missing words wait for that decision.
 | greet | verb | no-example |
 | group | noun | no-example |
 | grow | verb | no-example |
-| guest | noun | no-example |
-| guitar | noun | no-example |
-| had | have-verb | no-definition |
 | haircut | noun | no-example |
 | hamburger | noun | no-example |
 | has | have-verb | no-definition |
 | hat | noun | no-example |
-| have | have-verb | no-definition |
-| have to | modal auxiliary | no-definition |
-| he | pronoun | no-definition |
 | headache | noun | no-example |
-| hear | verb | no-example |
 | her | determiner | no-definition |
 | her | pronoun | no-definition |
-| hers | pronoun | no-definition |
-| hi | interjection | no-definition |
 | him | pronoun | no-definition |
 | his | determiner | no-definition |
-| his | pronoun | no-definition |
-| hobby | noun | no-example |
-| hole | noun | no-example |
 | homework | noun | no-example |
 | horse | noun | no-example |
-| hospital | noun | no-example |
 | hotel | noun | no-example |
-| how | adverb | no-definition |
-| hurt | verb | no-example |
-| husband | noun | no-example |
-| I | pronoun | no-definition |
-| ice cream | noun | no-example |
 | ideal | adjective | no-example |
-| if | conjunction | no-definition |
-| imagine | verb | no-example |
-| in | preposition | no-definition |
 | information | noun | no-example |
-| inside | preposition | no-definition |
 | interesting | adjective | no-example |
 | Internet | noun | no-definition |
 | interviewer | noun | no-example |
-| into | preposition | no-definition |
-| is | be-verb | no-definition |
 | island | noun | no-example |
-| it | pronoun | no-definition |
 | its | determiner | no-definition |
 | its | pronoun | no-definition |
 | jacket | noun | no-example |
@@ -314,25 +227,16 @@ the missing words wait for that decision.
 | jewelry | noun | no-example |
 | job | noun | no-example |
 | judge | verb | no-example |
-| juice | noun | no-example |
 | July | noun | no-example |
 | June | noun | no-example |
 | key | adjective | no-example |
-| key | noun | no-example |
-| kick | verb | no-example |
-| king | noun | no-example |
 | kiss | noun | no-example |
-| kitchen | noun | no-example |
 | kite | noun | no-example |
-| knee | noun | no-example |
-| knife | noun | no-example |
 | last name | noun | no-example |
-| laugh | verb | no-example |
 | leader | noun | no-example |
 | leaf | noun | no-example |
-| leg | noun | no-example |
 | let | verb | no-example |
-| like | preposition | no-definition |
+| like | preposition | rejected-in-review |
 | lily | noun | no-example |
 | lion | noun | no-example |
 | list | noun | no-example |
@@ -340,101 +244,62 @@ the missing words wait for that decision.
 | lot | adverb | no-definition |
 | lot | pronoun | no-definition |
 | lovely | adjective | no-example |
-| lunch | noun | no-example |
+| lunch | noun | rejected-in-review |
 | 'm | be-verb | no-definition |
 | machine | noun | no-example |
-| mail | noun | no-example |
 | man | noun | no-example |
-| many | determiner | no-definition |
-| many | pronoun | no-definition |
-| map | noun | no-example |
 | March | noun | no-example |
 | math | noun | no-example |
-| may | modal auxiliary | no-definition |
 | May | noun | no-example |
 | maybe | adverb | no-example |
-| me | pronoun | no-definition |
-| meal | noun | no-example |
 | meat | noun | no-example |
 | medicine | noun | no-example |
-| milk | noun | no-example |
-| mine | pronoun | no-definition |
-| Miss | noun | no-example |
 | mobile | noun | no-example |
 | mobile phone | noun | no-example |
 | mom | noun | no-example |
 | mommy | noun | no-example |
 | Monday | noun | no-example |
 | monkey | noun | no-example |
-| more | determiner | no-definition |
-| more | pronoun | no-definition |
-| most | determiner | no-definition |
 | mountain | noun | no-example |
 | mouse | noun | no-example |
 | Mr. | noun | no-example |
 | Mrs. | noun | no-example |
-| much | determiner | no-definition |
-| much | pronoun | no-definition |
 | mum | noun | no-example |
 | music | noun | no-example |
-| musician | noun | no-example |
-| must | modal auxiliary | no-definition |
-| my | determiner | no-definition |
-| near | preposition | no-definition |
-| need | modal auxiliary | no-definition |
 | neighbor | noun | no-example |
-| night | noun | no-example |
 | nine | number | no-example |
 | nineteen | number | no-example |
 | ninety | number | no-example |
-| no | determiner | no-definition |
 | notebook | noun | no-example |
-| nothing | pronoun | no-definition |
 | November | noun | no-example |
 | nurse | noun | no-example |
 | October | noun | no-example |
-| of | preposition | no-definition |
-| OK | adjective | no-definition |
+| of | preposition | rejected-in-review |
 | OK | adverb | no-example |
 | Olympics | noun | no-example |
-| on | preposition | no-definition |
-| one | determiner | no-definition |
 | one | number | no-example |
 | opera | noun | no-example |
-| or | conjunction | no-definition |
+| or | conjunction | rejected-in-review |
 | orange | adjective | no-example |
 | orange | noun | no-example |
-| other | determiner | no-definition |
-| our | determiner | no-definition |
-| ours | pronoun | no-definition |
-| over | preposition | no-definition |
 | page | noun | no-example |
 | pair | noun | no-example |
 | palace | noun | no-example |
 | pants | noun | no-example |
-| paper | noun | no-example |
-| paragraph | noun | no-example |
 | pardon | noun | no-example |
 | parent | noun | no-example |
 | partner | noun | no-example |
 | past | preposition | no-definition |
-| peace | noun | no-example |
 | pen | noun | no-example |
 | pencil | noun | no-example |
-| pet | noun | no-example |
 | phone | noun | no-example |
-| phone | verb | no-example |
 | photo | noun | no-example |
-| piano | noun | no-example |
-| picnic | noun | no-example |
 | pig | noun | no-example |
 | pink | adjective | no-example |
 | pizza | noun | no-example |
 | plane | noun | no-example |
-| player | noun | no-example |
 | pocket | noun | no-example |
 | poem | noun | no-example |
-| pollution | noun | no-example |
 | pool | noun | no-example |
 | pop | noun | no-example |
 | potato | noun | no-example |
@@ -442,82 +307,52 @@ the missing words wait for that decision.
 | princess | noun | no-example |
 | program | noun | no-example |
 | purple | noun | no-example |
-| rabbit | noun | no-example |
 | radio | noun | no-example |
-| rain | noun | no-example |
 | rat | noun | no-example |
 | 're | be-verb | no-definition |
 | reader | noun | no-example |
 | red | adjective | no-example |
-| repeat | verb | no-example |
 | reporter | noun | no-example |
 | restaurant | noun | no-example |
 | result | noun | no-example |
-| review | noun | no-example |
 | rice | noun | no-example |
-| ride | noun | no-example |
-| ring | verb | no-example |
+| ride | noun | rejected-in-review |
 | rose | noun | no-example |
 | rude | adjective | no-example |
 | ruler | noun | no-example |
 | 's | be-verb | no-definition |
-| sailor | noun | no-example |
-| salad | noun | no-example |
-| same | adverb | no-definition |
-| same | pronoun | no-definition |
 | sandwich | noun | no-example |
 | Saturday | noun | no-example |
-| save | verb | no-example |
 | saw | noun | no-example |
 | say | verb | no-example |
 | scientist | noun | no-example |
-| sea | noun | no-example |
+| sea | noun | rejected-in-review |
 | second | adjective | no-example |
 | self | noun | no-example |
-| sell | verb | sensitive |
 | September | noun | no-example |
 | seven | number | no-example |
 | seventeen | number | no-example |
 | seventy | number | no-example |
 | shake | noun | no-example |
-| she | pronoun | no-definition |
 | sheep | noun | no-example |
-| shelf | noun | no-example |
 | ship | noun | no-example |
-| shirt | noun | no-example |
-| shoe | noun | no-example |
-| should | modal auxiliary | no-definition |
-| shoulder | noun | no-example |
+| should | modal auxiliary | rejected-in-review |
 | shy | adjective | no-example |
 | sick | adjective | no-example |
-| singer | noun | no-example |
 | sir | noun | no-example |
-| sit | verb | no-example |
 | six | number | no-example |
 | sixteen | number | no-example |
 | sixty | number | no-example |
-| skill | noun | no-example |
 | skirt | noun | no-example |
-| sky | noun | no-example |
 | sleep | verb | no-example |
 | smart | adjective | no-example |
-| smile | noun | no-example |
 | smith | noun | no-example |
 | smoke | noun | no-example |
 | smoking | noun | sensitive |
 | snake | noun | no-example |
-| snow | noun | no-example |
 | snowy | adjective | no-example |
-| so | conjunction | no-definition |
 | soccer | noun | no-example |
-| sofa | noun | no-example |
-| some | determiner | no-definition |
-| some | pronoun | no-definition |
-| someone | pronoun | no-definition |
-| something | pronoun | no-definition |
 | sorry | adjective | no-example |
-| soup | noun | no-example |
-| speak | verb | no-example |
 | speech | noun | no-example |
 | spell | noun | no-example |
 | sport | noun | no-example |
@@ -529,119 +364,69 @@ the missing words wait for that decision.
 | stop | verb | no-example |
 | store | noun | no-example |
 | story | noun | no-example |
-| straight | adverb | no-example |
-| student | noun | no-example |
 | study | verb | no-example |
 | sugar | noun | no-example |
 | Sunday | noun | no-example |
-| sunshine | noun | no-example |
-| supermarket | noun | no-example |
 | surf | noun | no-example |
 | surprise | noun | no-example |
 | survey | noun | no-example |
 | sweet | adjective | no-example |
-| swimming pool | noun | no-example |
 | taxi | noun | no-example |
-| teach | verb | no-example |
 | teacher | noun | no-example |
-| team | noun | no-example |
 | temple | noun | no-example |
 | ten | number | no-example |
 | tennis | noun | no-example |
 | test | noun | no-example |
-| than | conjunction | no-definition |
-| than | preposition | no-definition |
-| thank | verb | no-example |
-| thanks | noun | no-example |
-| that | conjunction | no-definition |
-| that | determiner | no-definition |
-| that | pronoun | no-definition |
-| the | determiner | no-definition |
+| that | pronoun | rejected-in-review |
 | theater | noun | no-example |
 | their | determiner | no-definition |
-| them | pronoun | no-definition |
 | these | determiner | no-definition |
 | these | pronoun | no-definition |
-| they | pronoun | no-definition |
-| thirteen | number | no-example |
 | thirty | number | no-example |
-| this | determiner | no-definition |
-| this | pronoun | no-definition |
-| those | determiner | no-definition |
-| those | pronoun | no-definition |
+| those | pronoun | rejected-in-review |
 | three | number | no-example |
-| through | preposition | no-definition |
 | Thursday | noun | no-example |
 | ticket | noun | no-example |
-| to | infinitive-to | no-definition |
-| to | preposition | no-definition |
-| toilet | noun | no-example |
-| tomato | noun | no-example |
 | tomorrow | adverb | no-example |
 | tool | noun | no-example |
 | tooth | noun | no-example |
-| towel | noun | no-example |
 | tower | noun | no-example |
 | toy | noun | no-example |
 | travel | verb | no-example |
-| tree | noun | no-example |
-| truck | noun | no-example |
 | T-shirt | noun | no-example |
 | tube | noun | no-example |
 | Tuesday | noun | no-example |
 | turkey | noun | no-example |
 | turn | noun | no-example |
 | TV | noun | no-example |
-| twelve | number | no-example |
 | twenty | number | no-example |
 | umbrella | noun | no-example |
 | uncle | noun | no-example |
-| under | preposition | no-definition |
 | underline | noun | no-example |
-| until | preposition | no-definition |
-| up | preposition | no-definition |
-| us | pronoun | no-definition |
 | vase | noun | no-example |
 | vegetable | noun | no-example |
 | video | noun | no-example |
 | visit | verb | no-example |
 | volleyball | noun | no-example |
-| waiter | noun | no-example |
 | waitress | noun | no-example |
-| war | noun | sensitive |
-| was | be-verb | no-definition |
+| war | noun | rejected-in-review |
+| was | be-verb | rejected-in-review |
 | wash | noun | no-example |
-| wash | verb | no-example |
-| watch | noun | no-example |
-| water | noun | no-example |
-| we | pronoun | no-definition |
+| water | noun | rejected-in-review |
+| we | pronoun | rejected-in-review |
 | Wednesday | noun | no-example |
 | weekend | noun | no-example |
-| welcome | interjection | no-definition |
 | were | be-verb | no-definition |
-| what | determiner | no-definition |
-| what | pronoun | no-definition |
+| what | pronoun | rejected-in-review |
 | wheel | noun | no-example |
-| when | adverb | no-definition |
-| when | conjunction | no-definition |
-| where | adverb | no-definition |
-| where | conjunction | no-definition |
-| which | determiner | no-definition |
-| which | pronoun | no-definition |
+| where | conjunction | rejected-in-review |
 | white | noun | no-example |
-| who | pronoun | no-definition |
-| whose | determiner | no-definition |
-| whose | pronoun | no-definition |
-| why | adverb | no-definition |
+| who | pronoun | rejected-in-review |
 | wife | noun | no-example |
-| will | modal auxiliary | no-definition |
-| window | noun | no-example |
 | winter | noun | no-example |
-| with | preposition | no-definition |
+| with | preposition | rejected-in-review |
 | woman | noun | sensitive |
-| wonderful | adjective | no-example |
 | world | noun | no-example |
-| would | modal auxiliary | no-definition |
 | write | verb | no-example |
 | writer | noun | no-example |
 | yard | noun | no-example |
@@ -649,8 +434,3 @@ the missing words wait for that decision.
 | yellow | noun | no-example |
 | yes | adverb | no-definition |
 | yogurt | noun | no-example |
-| you | pronoun | no-definition |
-| your | determiner | no-definition |
-| yours | pronoun | no-definition |
-| yourself | pronoun | no-definition |
-| zoo | noun | no-example |

@@ -95,6 +95,70 @@ function readWordnet(
   });
 }
 
+const WIKTIONARY_CACHE = join(CACHE, 'wiktionary.json');
+const WIKTIONARY_API = 'https://en.wiktionary.org/w/api.php';
+const USER_AGENT =
+  'VocabTrainerDataBuild/1.0 (https://github.com/hoangtra02092006-ui/Testing-agent-plug)';
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+/**
+ * Wikitext of the given Wiktionary pages, cached in data-pipeline/.cache/wiktionary.json
+ * (null = no such page). Fetches 50 titles per request and backs off when rate limited (HTTP 429).
+ */
+async function wiktionaryPages(titles: string[]): Promise<Map<string, string>> {
+  const cache: Record<string, string | null> = existsSync(WIKTIONARY_CACHE)
+    ? JSON.parse(readFileSync(WIKTIONARY_CACHE, 'utf8'))
+    : {};
+  const todo = titles.filter((t) => !(t in cache));
+  for (let i = 0; i < todo.length; i += 50) {
+    const batch = todo.slice(i, i + 50);
+    const params = new URLSearchParams({
+      action: 'query',
+      format: 'json',
+      formatversion: '2',
+      prop: 'revisions',
+      rvprop: 'content',
+      rvslots: 'main',
+      titles: batch.join('|'),
+      maxlag: '5',
+    });
+    for (let attempt = 1; ; attempt += 1) {
+      const res = await fetch(`${WIKTIONARY_API}?${params}`, {
+        headers: { 'User-Agent': USER_AGENT },
+      });
+      if (res.ok) {
+        const data = (await res.json()) as {
+          query: {
+            normalized?: { from: string; to: string }[];
+            pages: { title: string; revisions?: { slots: { main: { content: string } } }[] }[];
+          };
+        };
+        const byTitle = new Map(data.query.pages.map((p) => [p.title, p]));
+        const normalized = new Map((data.query.normalized ?? []).map((n) => [n.from, n.to]));
+        for (const title of batch) {
+          const page = byTitle.get(normalized.get(title) ?? title);
+          cache[title] = page?.revisions?.[0]?.slots.main.content ?? null;
+        }
+        writeFileSync(WIKTIONARY_CACHE, JSON.stringify(cache));
+        console.log(`Wiktionary: ${Math.min(i + 50, todo.length)}/${todo.length} pages`);
+        break;
+      }
+      if (res.status !== 429 || attempt >= 12) {
+        throw new Error(
+          `Wiktionary request failed (HTTP ${res.status}). Run again later to resume.`,
+        );
+      }
+      const wait = 20_000 * attempt;
+      console.log(`Wiktionary rate limit, waiting ${wait / 1000}s (attempt ${attempt})`);
+      await sleep(wait);
+    }
+    await sleep(2_000);
+  }
+  return new Map(
+    titles.flatMap((t) => (typeof cache[t] === 'string' ? [[t, cache[t] as string]] : [])),
+  );
+}
+
 async function main() {
   const levels = (process.argv.slice(2).length ? process.argv.slice(2) : ['A1']) as CefrLevel[];
   const profileText = [
@@ -107,13 +171,25 @@ async function main() {
 
   for (const level of levels) {
     const levelRows = rows.filter((r) => r.level === level);
-    const { words, missing, droppedExamples } = buildWords(levelRows, entries, synsets);
+    const first = buildWords(levelRows, entries, synsets);
+    const wiktionary = await wiktionaryPages([...new Set(first.missing.map((m) => m.headword))]);
+    const { words, missing, droppedExamples, fromWiktionary } = buildWords(
+      levelRows,
+      entries,
+      synsets,
+      2,
+      wiktionary,
+    );
     const problems = validateWords(words);
     if (problems.length) throw new Error(`Validation failed for ${level}:\n${problems.join('\n')}`);
     writeFileSync(join(OUT, `${level}.json`), JSON.stringify(words));
     const report = [
       `# Data report ${level}`,
-      `Source entries: ${levelRows.length}. Included: ${words.length}. Missing: ${missing.length}.`,
+      `Source entries: ${levelRows.length}. Included: ${words.length} (${words.length - fromWiktionary.length} from WordNet, ${fromWiktionary.length} from Wiktionary). Missing: ${missing.length}.`,
+      '',
+      'WordNet is used first. A word WordNet cannot give is taken from Wiktionary under the same rules:',
+      'its first sense that is not obsolete, archaic, rare, dated, slang, offensive or specialist,',
+      "with that sense's own usage examples (book quotations are not used).",
       '',
       'Reasons:',
       '- no-definition: Open English WordNet has no entry for this word and part of speech',
@@ -121,9 +197,14 @@ async function main() {
       '- no-example: the primary (most common) sense has no example sentence containing the word.',
       '  Rarer senses are never used instead, so the meaning shown is always the common one.',
       '- sensitive: the definition or every example is unsuitable for school learners.',
+      '- rejected-in-review: the Wiktionary entry was read by hand and rejected',
+      '  (wrong meaning or odd example); see data-pipeline/review-wiktionary.ts.',
       '',
-      'A fallback source of definitions and examples (the design names Wiktionary) is not built yet;',
-      'the missing words wait for that decision.',
+      'Reasons below are the WordNet ones; these words had no usable Wiktionary sense either.',
+      '',
+      '## Words from Wiktionary',
+      '',
+      fromWiktionary.join(', '),
       '',
       '## Examples left out as unsuitable',
       '',
