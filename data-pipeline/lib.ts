@@ -26,6 +26,8 @@ export type MissingReason = 'no-definition' | 'no-example' | 'sensitive';
 export interface BuildResult {
   words: Word[];
   missing: { headword: string; pos: string; reason: MissingReason }[];
+  /** Examples left out as unsuitable for school learners. */
+  droppedExamples: { headword: string; example: string }[];
 }
 
 /** Minimal RFC 4180 CSV parser (quoted fields, escaped quotes, CRLF). */
@@ -127,22 +129,17 @@ export function slug(text: string): string {
 }
 
 /**
- * Words that make a definition or example unsuitable for school learners. Matching text is dropped
- * and reported rather than shown; whole words only, so "Sussex" or "skill" are not caught.
+ * Word stems that make a definition or example unsuitable for school learners. Inflections
+ * (s/es/d/ed/ing) are matched too; whole words only, so "Sussex" or "skill" are not caught.
+ * "sex" alone is left out on purpose: in definitions it usually means gender ("either sex").
  */
-const SENSITIVE_WORDS = [
-  'sex',
+const SENSITIVE_STEMS = [
   'sexual',
   'sexually',
   'drug',
-  'drugs',
   'kill',
-  'killed',
-  'killing',
   'murder',
-  'murdered',
   'rape',
-  'raped',
   'prostitute',
   'prostitution',
   'suicide',
@@ -159,18 +156,30 @@ const SENSITIVE_WORDS = [
   'cocaine',
   'heroin',
   'gun',
-  'guns',
   'shoot',
   'shot',
   'corpse',
   'torture',
 ];
-const SENSITIVE_PATTERN = new RegExp(`(^|[^a-z])(${SENSITIVE_WORDS.join('|')})([^a-z]|$)`, 'i');
 /** Phrases that are harmless word by word but not suitable together. */
 const SENSITIVE_PHRASES = [/sells? (her|his|their) body/i, /make love/i];
+/** Examples read by hand and judged unsuitable (stereotypes, alcohol, body shaming). */
+const EXCLUDED_EXAMPLES = new Set([
+  'he drowned his sorrows in whiskey at the bar',
+  "he hadn't remembered how fat she was",
+  'the woman kept house while the man hunted',
+  'smoking stinks',
+]);
 
-export function isSensitive(text: string): boolean {
-  return SENSITIVE_PATTERN.test(text) || SENSITIVE_PHRASES.some((p) => p.test(text));
+/**
+ * True when the text should not be shown to school learners. `headword` is ignored as a match,
+ * so a learner word such as "kill" or "war" can still be taught with a neutral example.
+ */
+export function isSensitive(text: string, headword = ''): boolean {
+  if (EXCLUDED_EXAMPLES.has(text.trim())) return true;
+  if (SENSITIVE_PHRASES.some((p) => p.test(text))) return true;
+  const own = headword.toLowerCase();
+  return SENSITIVE_STEMS.some((stem) => stem !== own && exampleUsesWord(text, stem));
 }
 
 /**
@@ -188,6 +197,7 @@ export function buildWords(
 ): BuildResult {
   const words: Word[] = [];
   const missing: BuildResult['missing'] = [];
+  const dropped: BuildResult['droppedExamples'] = [];
   const seen = new Set<string>();
 
   for (const row of rows) {
@@ -213,8 +223,9 @@ export function buildWords(
       report('no-example');
       continue;
     }
-    const examples = usable.filter((ex) => !isSensitive(ex));
-    if (isSensitive(primary.definition!) || examples.length === 0) {
+    const examples = usable.filter((ex) => !isSensitive(ex, headword));
+    for (const ex of usable) if (!examples.includes(ex)) dropped.push({ headword, example: ex });
+    if (isSensitive(primary.definition!, headword) || examples.length === 0) {
       report('sensitive');
       continue;
     }
@@ -227,7 +238,7 @@ export function buildWords(
       examples: examples.slice(0, maxExamples),
     });
   }
-  return { words, missing };
+  return { words, missing, droppedExamples: dropped };
 }
 
 /** AC11 check: every word has a definition and at least one example containing the word. */

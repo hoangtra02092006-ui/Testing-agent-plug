@@ -1,7 +1,8 @@
 import { useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { services } from '../app/services';
-import type { StudySettings } from '../domain/types';
+import { isInTodaysQueue } from '../domain/session';
+import type { StudySettings, Word } from '../domain/types';
 import { describeError } from '../shared/lib/errors';
 import { Button, Card, Screen, StatusMessage, TextField } from '../shared/ui';
 import { loadStudyData } from './loadStudyData';
@@ -27,9 +28,10 @@ export function AddWordScreen({
       return;
     }
     setSaving(true);
+    let word;
     try {
       const now = new Date();
-      const word = await services.progress.addCustomWord(
+      word = await services.progress.addCustomWord(
         {
           headword,
           pos: '',
@@ -38,18 +40,30 @@ export function AddWordScreen({
         },
         (id) => services.scheduler.createCard(id, now),
       );
-      // A new word only enters today's queue while the daily new-word limit allows it.
-      const today = await loadStudyData(settings, new Date());
-      const key = today.plan.queue.includes(word.id) ? 'add.saved' : 'add.savedTomorrow';
-      setMessage({ ok: true, text: t(key, { word: word.headword }) });
-      setHeadword('');
-      setMeaning('');
-      setExample('');
     } catch (err) {
       setMessage({ ok: false, text: describeError(err, t).message });
-    } finally {
       setSaving(false);
+      return;
     }
+    // Saved: clear the form at once so a second press cannot add a duplicate.
+    setHeadword('');
+    setMeaning('');
+    setExample('');
+    setMessage({ ok: true, text: await savedMessage(word) });
+    setSaving(false);
+  };
+
+  /** Says whether the word is studied today; only picks the wording, so a failure is not an error. */
+  const savedMessage = async (word: Word) => {
+    try {
+      const today = await loadStudyData(settings, new Date());
+      if (!isInTodaysQueue(today.plan, word.id))
+        return t('add.savedTomorrow', { word: word.headword });
+    } catch {
+      // Word files or progress could not be read (e.g. offline before the first load): the word
+      // is saved either way, so fall back to the general message.
+    }
+    return t('add.saved', { word: word.headword });
   };
 
   return (

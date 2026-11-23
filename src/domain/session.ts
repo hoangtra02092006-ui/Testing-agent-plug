@@ -100,3 +100,8 @@ export function planToday(
     countNewWordsIntroducedToday(logs, now),
   );
 }
+
+/** Whether a word is studied today, or waits (e.g. a custom word added after the daily limit). */
+export function isInTodaysQueue(plan: SessionPlan, wordId: string): boolean {
+  return plan.queue.includes(wordId);
+}

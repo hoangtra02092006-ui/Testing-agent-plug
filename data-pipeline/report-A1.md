@@ -1,11 +1,37 @@
 # Data report A1
-Source entries: 1164. Included: 542. Missing: 622.
+Source entries: 1164. Included: 539. Missing: 625.
+
+Reasons:
+- no-definition: Open English WordNet has no entry for this word and part of speech
+  (mostly function words: articles, pronouns, prepositions, numbers).
+- no-example: the primary (most common) sense has no example sentence containing the word.
+  Rarer senses are never used instead, so the meaning shown is always the common one.
+- sensitive: the definition or every example is unsuitable for school learners.
+
+A fallback source of definitions and examples (the design names Wiktionary) is not built yet;
+the missing words wait for that decision.
+
+## Examples left out as unsuitable
+
+- action: "there were stories of murders and other unnatural actions"
+- bar: "he drowned his sorrows in whiskey at the bar"
+- cream: "the cream of England's young men were killed in the Great War"
+- everywhere: "he carried a gun everywhere he went"
+- fat: "he hadn't remembered how fat she was"
+- make: "make love, not war"
+- sell: "She sells her body to survive and support her drug habit"
+- smoking: "smoking stinks"
+- war: "thousands of people were killed in the war"
+- woman: "the woman kept house while the man hunted"
+
+## Missing words
 
 | Headword | Part of speech | Reason |
 |---|---|---|
 | a | determiner | no-definition |
 | about | preposition | no-definition |
 | above | preposition | no-definition |
+| action | noun | sensitive |
 | actor | noun | no-example |
 | address | noun | no-example |
 | after | preposition | no-definition |
@@ -39,6 +65,7 @@ Source entries: 1164. Included: 542. Missing: 622.
 | autumn | noun | no-example |
 | banana | noun | no-example |
 | band | noun | no-example |
+| bar | noun | sensitive |
 | basketball | noun | no-example |
 | bat | noun | no-example |
 | bathroom | noun | no-example |
@@ -180,6 +207,7 @@ Source entries: 1164. Included: 542. Missing: 622.
 | fairy | noun | no-example |
 | fan | noun | no-example |
 | farmer | noun | no-example |
+| fat | adjective | sensitive |
 | February | noun | no-example |
 | feed | noun | no-example |
 | feel | verb | no-example |
@@ -291,8 +319,6 @@ Source entries: 1164. Included: 542. Missing: 622.
 | key | adjective | no-example |
 | key | noun | no-example |
 | kick | verb | no-example |
-| kid | noun | sensitive |
-| kill | verb | sensitive |
 | king | noun | no-example |
 | kiss | noun | no-example |
 | kitchen | noun | no-example |
@@ -477,6 +503,7 @@ Source entries: 1164. Included: 542. Missing: 622.
 | smile | noun | no-example |
 | smith | noun | no-example |
 | smoke | noun | no-example |
+| smoking | noun | sensitive |
 | snake | noun | no-example |
 | snow | noun | no-example |
 | snowy | adjective | no-example |
@@ -610,6 +637,7 @@ Source entries: 1164. Included: 542. Missing: 622.
 | window | noun | no-example |
 | winter | noun | no-example |
 | with | preposition | no-definition |
+| woman | noun | sensitive |
 | wonderful | adjective | no-example |
 | world | noun | no-example |
 | would | modal auxiliary | no-definition |

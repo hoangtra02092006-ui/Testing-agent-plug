@@ -107,13 +107,29 @@ async function main() {
 
   for (const level of levels) {
     const levelRows = rows.filter((r) => r.level === level);
-    const { words, missing } = buildWords(levelRows, entries, synsets);
+    const { words, missing, droppedExamples } = buildWords(levelRows, entries, synsets);
     const problems = validateWords(words);
     if (problems.length) throw new Error(`Validation failed for ${level}:\n${problems.join('\n')}`);
     writeFileSync(join(OUT, `${level}.json`), JSON.stringify(words));
     const report = [
       `# Data report ${level}`,
       `Source entries: ${levelRows.length}. Included: ${words.length}. Missing: ${missing.length}.`,
+      '',
+      'Reasons:',
+      '- no-definition: Open English WordNet has no entry for this word and part of speech',
+      '  (mostly function words: articles, pronouns, prepositions, numbers).',
+      '- no-example: the primary (most common) sense has no example sentence containing the word.',
+      '  Rarer senses are never used instead, so the meaning shown is always the common one.',
+      '- sensitive: the definition or every example is unsuitable for school learners.',
+      '',
+      'A fallback source of definitions and examples (the design names Wiktionary) is not built yet;',
+      'the missing words wait for that decision.',
+      '',
+      '## Examples left out as unsuitable',
+      '',
+      ...droppedExamples.map((d) => `- ${d.headword}: "${d.example}"`),
+      '',
+      '## Missing words',
       '',
       '| Headword | Part of speech | Reason |',
       '|---|---|---|',

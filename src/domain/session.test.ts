@@ -3,6 +3,7 @@ import {
   advanceQueue,
   buildSession,
   countNewWordsIntroducedToday,
+  isInTodaysQueue,
   levelOfWordId,
   levelsToLoad,
   planToday,
@@ -164,5 +165,13 @@ describe('planToday', () => {
       logs,
     );
     expect(plan.queue).toEqual(['a1:due:noun', 'a1:n1:noun']);
+  });
+});
+
+describe('isInTodaysQueue', () => {
+  it('tells whether a word is studied today', () => {
+    const plan = { queue: ['a', 'b'], dueCount: 1, newCount: 1 };
+    expect(isInTodaysQueue(plan, 'b')).toBe(true);
+    expect(isInTodaysQueue(plan, 'c')).toBe(false);
   });
 });

@@ -79,8 +79,17 @@ describe('isSensitive', () => {
     ['Sussex is a county', false],
     ['a useful skill', false],
     ['the cat sat on the mat', false],
+    ['there were stories of murders', true],
+    ['he kills time', true],
+    ['a young person of either sex', false],
+    ['smoking stinks', true],
   ])('isSensitive(%s) = %s', (text, expected) => {
     expect(isSensitive(text)).toBe(expected);
+  });
+
+  it('does not count the headword itself, so learner words like "kill" stay teachable', () => {
+    expect(isSensitive('kill time', 'kill')).toBe(false);
+    expect(isSensitive('kill the drug lord', 'kill')).toBe(true);
   });
 });
 
@@ -147,6 +156,9 @@ describe('buildWords', () => {
       synsets,
     );
     expect(words.map((w) => w.examples)).toEqual([['a day off']]);
+    expect(buildWords([row('day')], entries, synsets).droppedExamples).toEqual([
+      { headword: 'day', example: 'drugs every day' },
+    ]);
     expect(missing).toEqual([
       { headword: 'dealer', pos: 'noun', reason: 'sensitive' },
       { headword: 'rat', pos: 'noun', reason: 'sensitive' },
