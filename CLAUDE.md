@@ -20,10 +20,10 @@
 | Cài đặt | `npm install` |
 | Chạy local | `npm run dev` |
 | Test | `npm test` (Vitest) |
-| Đo độ phủ (`src/domain`, `src/data`, `data-pipeline/lib.ts`, ngưỡng > 80%) | `npm run test:coverage` |
+| Đo độ phủ (`src/domain`, `src/data`, `data-pipeline/lib.ts`, `data-pipeline/wiktionary.ts`, ngưỡng > 80%) | `npm run test:coverage` |
 | Lint / format / kiểu | `npm run lint` · `npm run format` · `npm run typecheck` |
 | Build | `npm run build` |
-| Dựng dữ liệu từ | `npm run data:build -- A1` (tải nguồn vào `data-pipeline/.cache`, ghi `public/words/A1.json` và `data-pipeline/report-A1.md`) |
+| Dựng dữ liệu từ | `npm run data:build -- A1` (tải nguồn vào `data-pipeline/.cache`, ghi `public/words/A1.json` và `data-pipeline/report-A1.md`). Từ WordNet thiếu thì lấy Wiktionary, lưu tạm ở `.cache/wiktionary.json`; bị giới hạn tốc độ (429) thì script tự chờ, lỗi thì chạy lại sẽ tiếp tục. Trên cloud cần `NODE_USE_ENV_PROXY=1`. Sau mỗi lần dựng lại, đọc mục "Words from Wiktionary" trong báo cáo và ghi từ sai vào `data-pipeline/review-wiktionary.ts`. |
 | Xem bản build | `npm run build` rồi `npx vite preview` |
 
 ## Kiến trúc
@@ -44,7 +44,7 @@
 - Build tĩnh, Trang bấm deploy production. Lùi: deploy lại bản build trước.
 
 ## Dữ liệu và giấy phép
-- CEFR-J Vocabulary Profile 1.5 (ghi nguồn bắt buộc), Octanove Vocabulary Profile C1/C2 1.0 (CC BY-SA 4.0), Open English WordNet 2024 (định nghĩa, ví dụ; CC BY 4.0). File `public/words/*.json` dẫn xuất từ Octanove phải giữ CC BY-SA 4.0.
+- CEFR-J Vocabulary Profile 1.5 (ghi nguồn bắt buộc), Octanove Vocabulary Profile C1/C2 1.0 (CC BY-SA 4.0), Open English WordNet 2024 (định nghĩa, ví dụ; CC BY 4.0), Wiktionary tiếng Anh (định nghĩa, ví dụ cho từ WordNet thiếu; CC BY-SA 4.0). Mọi file `public/words/*.json` có nội dung từ Octanove hoặc Wiktionary phải giữ CC BY-SA 4.0 (A1 đã có nội dung Wiktionary).
 
 ## Luật cứng riêng
 - Chưa có.

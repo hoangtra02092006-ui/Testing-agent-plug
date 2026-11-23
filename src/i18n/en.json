@@ -59,7 +59,7 @@
   "about.title": "About",
   "about.body": "This app uses spaced repetition (FSRS algorithm) and active recall before showing the answer.",
   "about.sources": "Data sources",
-  "about.missing": "This first version has no Vietnamese meanings yet and only level A1. Level A1 currently has 539 of the 1164 CEFR-J words: each uses only its most common meaning with an example sentence containing the word. The rest, mostly words with no open example yet (such as apple, egg) and function words (such as a, the, in), will be added once another source of definitions and examples is in place.",
+  "about.missing": "This first version has no Vietnamese meanings yet and only level A1. Level A1 currently has 764 of the 1164 CEFR-J words: each uses its most common meaning with an example sentence containing the word, from WordNet or, where WordNet has none, from Wiktionary. The rest have no suitable open example yet and will be added later.",
   "home.days_one": "{{count}} day",
   "home.days_other": "{{count}} days",
   "errors.backupNotJson": "This file is not a valid backup (it is not JSON).",

@@ -17,6 +17,11 @@ const SOURCES = [
     detail: 'Definitions and examples — CC BY 4.0.',
     url: 'https://github.com/globalwordnet/english-wordnet',
   },
+  {
+    name: 'Wiktionary (English)',
+    detail: 'Definitions and examples for words WordNet does not cover — CC BY-SA 4.0.',
+    url: 'https://en.wiktionary.org/',
+  },
 ];
 
 export function AboutScreen({ onBack }: { onBack: () => void }) {
