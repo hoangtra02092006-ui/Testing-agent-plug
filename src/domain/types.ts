@@ -38,7 +38,20 @@ export interface ReviewLog {
   reviewedAt: Date;
 }
 
+export const RATINGS: readonly Rating[] = ['again', 'hard', 'good', 'easy'];
+
+export const CARD_STATES: readonly CardState[] = ['new', 'learning', 'review', 'relearning'];
+
+export type UiLanguage = 'vi' | 'en';
+
 export interface StudySettings {
   level: CefrLevel;
   newWordsPerDay: number;
+  uiLanguage: UiLanguage;
 }
+
+export const DEFAULT_SETTINGS: StudySettings = {
+  level: 'A1',
+  newWordsPerDay: 10,
+  uiLanguage: 'vi',
+};

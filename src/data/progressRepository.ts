@@ -1,6 +1,6 @@
 import type { Card, ReviewLog, Word } from '../domain/types';
 import type { VocabularyDb } from './db';
-import type { ProgressRepository } from './repositories';
+import type { NewCustomWord, ProgressRepository } from './repositories';
 
 export class DexieProgressRepository implements ProgressRepository {
   constructor(
@@ -25,7 +25,7 @@ export class DexieProgressRepository implements ProgressRepository {
     return rows.map(({ wordId, rating, reviewedAt }) => ({ wordId, rating, reviewedAt }));
   }
 
-  async addCustomWord(input: Omit<Word, 'id' | 'level'>): Promise<Word> {
+  async addCustomWord(input: NewCustomWord, createCard: (wordId: string) => Card): Promise<Word> {
     const headword = input.headword.trim();
     const definitionEn = input.definitionEn.trim();
     if (!headword || !definitionEn) {
@@ -38,7 +38,10 @@ export class DexieProgressRepository implements ProgressRepository {
       id: `custom:${this.newId()}`,
       level: 'custom',
     };
-    await this.db.customWords.add(word);
+    await this.db.transaction('rw', [this.db.customWords, this.db.cards], async () => {
+      await this.db.customWords.add(word);
+      await this.db.cards.add(createCard(word.id));
+    });
     return word;
   }
 

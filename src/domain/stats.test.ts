@@ -11,7 +11,12 @@ const log = (reviewedAt: Date, rating: Rating = 'good'): ReviewLog => ({
 
 describe('computeStats (AC7)', () => {
   it('returns empty stats without reviews', () => {
-    expect(computeStats([], at(10, 9))).toEqual({ reviewed: 0, accuracy: null, streakDays: 0 });
+    expect(computeStats([], at(10, 9))).toEqual({
+      reviewedWords: 0,
+      reviews: 0,
+      accuracy: null,
+      streakDays: 0,
+    });
   });
 
   it('computes accuracy as the share of non-"again" ratings', () => {
@@ -22,6 +27,19 @@ describe('computeStats (AC7)', () => {
       log(at(10, 8), 'easy'),
     ];
     expect(computeStats(logs, at(10, 9)).accuracy).toBe(0.75);
+  });
+
+  it('counts a word answered twice once in reviewedWords but twice in reviews', () => {
+    const logs: ReviewLog[] = [
+      { wordId: 'a', rating: 'again', reviewedAt: at(10, 8) },
+      { wordId: 'a', rating: 'good', reviewedAt: at(10, 8, 5) },
+      { wordId: 'b', rating: 'good', reviewedAt: at(10, 8, 6) },
+    ];
+    expect(computeStats(logs, at(10, 9))).toMatchObject({ reviewedWords: 2, reviews: 3 });
+  });
+
+  it('runs in a non-UTC zone during tests', () => {
+    expect(new Date(2026, 0, 10).getTimezoneOffset()).toBe(-420);
   });
 
   it('counts consecutive local days ending today', () => {

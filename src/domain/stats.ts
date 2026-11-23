@@ -1,7 +1,10 @@
 import type { ReviewLog } from './types';
 
 export interface StudyStats {
-  reviewed: number;
+  /** Distinct words reviewed. */
+  reviewedWords: number;
+  /** Total answers given (a word forgotten and shown again counts twice). */
+  reviews: number;
   /** Share of reviews not rated "again", 0..1. Null when there is nothing to measure. */
   accuracy: number | null;
   /** Consecutive local days with at least one review, ending today or yesterday. */
@@ -16,9 +19,9 @@ export function localDayNumber(date: Date): number {
 }
 
 export function computeStats(logs: ReviewLog[], now: Date): StudyStats {
-  const reviewed = logs.length;
-  const accuracy =
-    reviewed === 0 ? null : logs.filter((l) => l.rating !== 'again').length / reviewed;
+  const reviews = logs.length;
+  const reviewedWords = new Set(logs.map((l) => l.wordId)).size;
+  const accuracy = reviews === 0 ? null : logs.filter((l) => l.rating !== 'again').length / reviews;
 
   const days = new Set(logs.map((l) => localDayNumber(l.reviewedAt)));
   const today = localDayNumber(now);
@@ -29,7 +32,7 @@ export function computeStats(logs: ReviewLog[], now: Date): StudyStats {
     cursor -= 1;
   }
 
-  return { reviewed, accuracy, streakDays };
+  return { reviewedWords, reviews, accuracy, streakDays };
 }
 
 /** Logs of the session that started at `since`. */
