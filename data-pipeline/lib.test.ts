@@ -11,6 +11,7 @@ import {
   type LexEntry,
   type Synset,
 } from './lib';
+import type { Word } from '../src/domain/types';
 
 describe('parseCsv', () => {
   it('handles quoted fields, escaped quotes, CRLF and a BOM', () => {
@@ -209,5 +210,16 @@ describe('generated A1 file', () => {
     const words = JSON.parse(readFileSync('public/words/A1.json', 'utf8'));
     expect(words.length).toBeGreaterThan(500);
     expect(validateWords(words)).toEqual([]);
+  });
+
+  it('contains no definition or example unsuitable for school learners', async () => {
+    const { readFileSync } = await import('node:fs');
+    const words: Word[] = JSON.parse(readFileSync('public/words/A1.json', 'utf8'));
+    const flagged = words.flatMap((w) =>
+      [w.definitionEn, ...w.examples]
+        .filter((text) => isSensitive(text, w.headword) || /killed .*people/i.test(text))
+        .map((text) => `${w.id}: ${text}`),
+    );
+    expect(flagged).toEqual([]);
   });
 });

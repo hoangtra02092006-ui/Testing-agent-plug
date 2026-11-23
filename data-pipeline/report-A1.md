@@ -3,7 +3,7 @@ Source entries: 1164. Included: 539. Missing: 625.
 
 Reasons:
 - no-definition: Open English WordNet has no entry for this word and part of speech
-  (mostly function words: articles, pronouns, prepositions, numbers).
+  (function words: articles, pronouns, prepositions, determiners).
 - no-example: the primary (most common) sense has no example sentence containing the word.
   Rarer senses are never used instead, so the meaning shown is always the common one.
 - sensitive: the definition or every example is unsuitable for school learners.
@@ -18,6 +18,7 @@ the missing words wait for that decision.
 - cream: "the cream of England's young men were killed in the Great War"
 - everywhere: "he carried a gun everywhere he went"
 - fat: "he hadn't remembered how fat she was"
+- kill: "This man killed several people when he tried to rob a bank"
 - make: "make love, not war"
 - sell: "She sells her body to survive and support her drug habit"
 - smoking: "smoking stinks"

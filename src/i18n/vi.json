@@ -59,7 +59,7 @@
   "about.title": "Giới thiệu",
   "about.body": "Ứng dụng dùng phương pháp ôn ngắt quãng (thuật toán FSRS) và tự nhớ trước khi xem đáp án.",
   "about.sources": "Nguồn dữ liệu",
-  "about.missing": "Bản đầu chưa có nghĩa tiếng Việt và mới có mức A1. Mức A1 hiện có 539/1164 từ của CEFR-J: mỗi từ chỉ dùng nghĩa thông dụng nhất kèm câu ví dụ có chứa từ đó. Các từ còn lại (chủ yếu là từ chức năng như a, the, in và những từ chưa có câu ví dụ mở như apple, egg) sẽ được bổ sung khi có nguồn định nghĩa và ví dụ thêm.",
+  "about.missing": "Bản đầu chưa có nghĩa tiếng Việt và mới có mức A1. Mức A1 hiện có 539/1164 từ của CEFR-J: mỗi từ chỉ dùng nghĩa thông dụng nhất kèm câu ví dụ có chứa từ đó. Các từ còn lại, phần lớn là từ chưa có câu ví dụ mở (như apple, egg) và từ chức năng (như a, the, in), sẽ được bổ sung khi có nguồn định nghĩa và ví dụ thêm.",
   "home.days_other": "{{count}} ngày",
   "errors.backupNotJson": "File này không phải bản sao lưu hợp lệ (không phải JSON).",
   "errors.backupWrongApp": "File này không phải bản sao lưu của ứng dụng.",

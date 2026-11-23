@@ -163,12 +163,16 @@ const SENSITIVE_STEMS = [
 ];
 /** Phrases that are harmless word by word but not suitable together. */
 const SENSITIVE_PHRASES = [/sells? (her|his|their) body/i, /make love/i];
-/** Examples read by hand and judged unsuitable (stereotypes, alcohol, body shaming). */
+/**
+ * Examples read by hand and judged unsuitable (violence, stereotypes, alcohol, body shaming).
+ * Every example of a headword that is itself a sensitive stem (e.g. "kill") is read by hand.
+ */
 const EXCLUDED_EXAMPLES = new Set([
   'he drowned his sorrows in whiskey at the bar',
   "he hadn't remembered how fat she was",
   'the woman kept house while the man hunted',
   'smoking stinks',
+  'This man killed several people when he tried to rob a bank',
 ]);
 
 /**

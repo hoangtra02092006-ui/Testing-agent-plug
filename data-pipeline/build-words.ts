@@ -117,7 +117,7 @@ async function main() {
       '',
       'Reasons:',
       '- no-definition: Open English WordNet has no entry for this word and part of speech',
-      '  (mostly function words: articles, pronouns, prepositions, numbers).',
+      '  (function words: articles, pronouns, prepositions, determiners).',
       '- no-example: the primary (most common) sense has no example sentence containing the word.',
       '  Rarer senses are never used instead, so the meaning shown is always the common one.',
       '- sensitive: the definition or every example is unsuitable for school learners.',
