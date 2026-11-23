@@ -37,13 +37,13 @@ Mọi màn có trạng thái đang tải / rỗng / lỗi. Thiết kế mobile t
 
 **Logic** (`src/domain/`, không React, không Dexie):
 - `Scheduler` (interface) ← `FsrsScheduler`: nhận thẻ + điểm chấm + thời điểm → thẻ mới.
-- `buildSession(now, cards, settings)`: thẻ đến hạn trước (hạn sớm nhất trước), rồi từ mới đến khi đủ hạn mức/ngày; thẻ "Quên" quay lại cuối phiên.
+- `buildSession(now, cards, newWordIds, settings, introducedToday)`: thẻ đến hạn trước (hạn sớm nhất trước), rồi từ mới (thẻ "new" đã lưu như từ tự thêm, rồi từ của mức đang chọn) đến khi đủ hạn mức/ngày; `countNewWordsIntroducedToday` tính số từ mới đã học hôm nay theo ngày local; thẻ "Quên" quay lại cuối phiên.
 - `computeStats(logs, now)`: tỉ lệ nhớ đúng, chuỗi ngày (theo múi giờ máy người học).
 
 **Dữ liệu**:
 - `public/words/<level>.json`: `{ id, headword, pos, level, ipa?, meaningVi?, definitionEn, examples[] }` (`meaningVi` để trống ở bản đầu). Tải theo mức khi cần.
-- IndexedDB (Dexie): `cards` (wordId, state, due, stability, difficulty, reps, lapses, lastReview) · `reviewLogs` (wordId, rating, reviewedAt) · `customWords` · `settings`. Có số phiên bản schema để nâng cấp sau.
-- Sao lưu: xuất toàn bộ IndexedDB ra một file JSON có `schemaVersion`; nhập thì kiểm schema trước khi ghi đè.
+- IndexedDB (Dexie): `cards` (wordId, state, due, reps, lapses, lastReview, `schedulerData` — trạng thái riêng của thuật toán ôn, để đổi thuật toán không phải đổi bảng) · `reviewLogs` (wordId, rating, reviewedAt) · `customWords` · `settings`. Có số phiên bản schema để nâng cấp sau.
+- Sao lưu: xuất toàn bộ IndexedDB ra một file JSON có phiên bản định dạng riêng; nhập thì kiểm từng phần tử trước khi ghi đè, sai thì báo phần tử nào và giữ nguyên dữ liệu cũ.
 
 **Script dữ liệu** (`data-pipeline/`, chạy một lần trên máy dev):
 1. Đọc 2 file CSV, chuẩn hoá từ (tách biến thể kiểu `a.m./A.M.`), bỏ trùng.
