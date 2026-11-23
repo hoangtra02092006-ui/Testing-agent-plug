@@ -3,10 +3,10 @@ Source entries: 1164. Included: 764 (538 from WordNet, 226 from Wiktionary). Mis
 
 WordNet is used first. A word WordNet cannot give is taken from Wiktionary under the same rules.
 Only senses without an obsolete, archaic, rare, dated, slang, offensive or specialist label count,
-and only full-sentence usage examples of that sense (no book quotations, at most 20 words).
+and only full-sentence usage examples of that sense (no book quotations, at most 22 words).
 When WordNet has a definition, the Wiktionary sense must share its wording: among senses about
 as close as the best match, the earliest is used; with no close sense the word stays missing.
-Senses that only name a grammatical form ("Inflection of be") have no definition.
+Senses that only name a grammatical form ("Inflection of be", "Used to form ...") have no definition.
 
 Reasons:
 - no-definition: Open English WordNet has no entry for this word and part of speech
@@ -21,12 +21,13 @@ Reasons below are the WordNet ones; these words had no usable Wiktionary sense e
 
 ## Words from Wiktionary
 
-a1:a:determiner, a1:after:preposition, a1:all:determiner, a1:all:pronoun, a1:also:adverb, a1:an:determiner, a1:another:determiner, a1:any:determiner, a1:any:pronoun, a1:anybody:pronoun, a1:anyone:pronoun, a1:anything:pronoun, a1:around:preposition, a1:as:preposition, a1:at:preposition, a1:basketball:noun, a1:bean:noun, a1:because:conjunction, a1:bedroom:noun, a1:beef:noun, a1:before:preposition, a1:begin:verb, a1:behind:preposition, a1:below:adverb, a1:below:preposition, a1:between:preposition, a1:bird:noun, a1:birthday:noun, a1:boat:noun, a1:both:determiner, a1:both:pronoun, a1:bottom:noun, a1:bread:noun, a1:breakfast:noun, a1:by:preposition, a1:can:modal-auxiliary, a1:cap:noun, a1:chocolate:noun, a1:church:noun, a1:classmate:noun, a1:clock:noun, a1:collect:verb, a1:computer:noun, a1:conversation:noun, a1:cook:noun, a1:dictionary:noun, a1:do:do-verb, a1:drama:noun, a1:dress:noun, a1:driver:noun, a1:drum:noun, a1:each:determiner, a1:each:pronoun, a1:egg:noun, a1:else:adverb, a1:enjoy:verb, a1:every:determiner, a1:everybody:pronoun, a1:everything:pronoun, a1:eye:noun, a1:fan:noun, a1:feed:noun, a1:fever:noun, a1:fight:noun, a1:fishing:noun, a1:flag:noun, a1:flower:noun, a1:football:noun, a1:forget:verb, a1:four:number, a1:from:preposition, a1:fun:adjective, a1:gift:noun, a1:glass:noun, a1:good-morning:interjection, a1:guest:noun, a1:guitar:noun, a1:had:have-verb, a1:have:have-verb, a1:have-to:modal-auxiliary, a1:he:pronoun, a1:hear:verb, a1:hers:pronoun, a1:hi:interjection, a1:his:pronoun, a1:hobby:noun, a1:hole:noun, a1:hospital:noun, a1:how:adverb, a1:hurt:verb, a1:husband:noun, a1:i:pronoun, a1:ice-cream:noun, a1:if:conjunction, a1:imagine:verb, a1:in:preposition, a1:inside:preposition, a1:into:preposition, a1:it:pronoun, a1:join:verb, a1:juice:noun, a1:key:noun, a1:kick:verb, a1:king:noun, a1:kitchen:noun, a1:knee:noun, a1:knife:noun, a1:laugh:verb, a1:mail:noun, a1:many:determiner, a1:many:pronoun, a1:map:noun, a1:may:modal-auxiliary, a1:me:pronoun, a1:meal:noun, a1:mine:pronoun, a1:miss:noun, a1:more:determiner, a1:more:pronoun, a1:much:determiner, a1:much:pronoun, a1:musician:noun, a1:must:modal-auxiliary, a1:my:determiner, a1:near:preposition, a1:need:modal-auxiliary, a1:night:noun, a1:no:determiner, a1:nothing:pronoun, a1:ok:adjective, a1:on:preposition, a1:one:determiner, a1:other:determiner, a1:our:determiner, a1:ours:pronoun, a1:over:preposition, a1:paper:noun, a1:paragraph:noun, a1:peace:noun, a1:pet:noun, a1:phone:verb, a1:piano:noun, a1:picnic:noun, a1:player:noun, a1:pollution:noun, a1:rabbit:noun, a1:rain:noun, a1:repeat:verb, a1:review:noun, a1:ring:verb, a1:sailor:noun, a1:salad:noun, a1:same:adverb, a1:same:pronoun, a1:save:verb, a1:sell:verb, a1:she:pronoun, a1:shelf:noun, a1:shirt:noun, a1:shoe:noun, a1:shoulder:noun, a1:singer:noun, a1:sit:verb, a1:skill:noun, a1:sky:noun, a1:smile:noun, a1:snow:noun, a1:so:conjunction, a1:sofa:noun, a1:some:determiner, a1:some:pronoun, a1:someone:pronoun, a1:something:pronoun, a1:soup:noun, a1:straight:adverb, a1:student:noun, a1:sunshine:noun, a1:supermarket:noun, a1:swimming-pool:noun, a1:teach:verb, a1:team:noun, a1:than:conjunction, a1:thank:verb, a1:thanks:noun, a1:that:conjunction, a1:that:determiner, a1:the:determiner, a1:them:pronoun, a1:they:pronoun, a1:thirteen:number, a1:this:determiner, a1:this:pronoun, a1:through:preposition, a1:to:infinitive-to, a1:to:preposition, a1:toilet:noun, a1:tomato:noun, a1:towel:noun, a1:tree:noun, a1:truck:noun, a1:twelve:number, a1:under:preposition, a1:until:preposition, a1:up:preposition, a1:us:pronoun, a1:waiter:noun, a1:wash:verb, a1:watch:noun, a1:welcome:interjection, a1:what:determiner, a1:when:adverb, a1:when:conjunction, a1:where:adverb, a1:which:determiner, a1:which:pronoun, a1:whose:determiner, a1:whose:pronoun, a1:why:adverb, a1:will:modal-auxiliary, a1:window:noun, a1:wonderful:adjective, a1:you:pronoun, a1:your:determiner, a1:yours:pronoun, a1:yourself:pronoun, a1:zoo:noun
+a1:a:determiner, a1:after:preposition, a1:all:determiner, a1:all:pronoun, a1:also:adverb, a1:an:determiner, a1:another:determiner, a1:any:determiner, a1:any:pronoun, a1:anybody:pronoun, a1:anyone:pronoun, a1:anything:pronoun, a1:around:preposition, a1:as:preposition, a1:at:preposition, a1:basketball:noun, a1:bean:noun, a1:because:conjunction, a1:bedroom:noun, a1:beef:noun, a1:before:preposition, a1:begin:verb, a1:behind:preposition, a1:below:adverb, a1:below:preposition, a1:between:preposition, a1:bird:noun, a1:birthday:noun, a1:boat:noun, a1:both:determiner, a1:both:pronoun, a1:bottom:noun, a1:bread:noun, a1:breakfast:noun, a1:by:preposition, a1:can:modal-auxiliary, a1:cap:noun, a1:chocolate:noun, a1:church:noun, a1:classmate:noun, a1:clock:noun, a1:collect:verb, a1:computer:noun, a1:conversation:noun, a1:cook:noun, a1:dictionary:noun, a1:do:do-verb, a1:drama:noun, a1:dress:noun, a1:driver:noun, a1:drum:noun, a1:each:determiner, a1:each:pronoun, a1:egg:noun, a1:else:adverb, a1:enjoy:verb, a1:every:determiner, a1:everybody:pronoun, a1:everything:pronoun, a1:eye:noun, a1:fan:noun, a1:feed:noun, a1:fever:noun, a1:fight:noun, a1:fishing:noun, a1:flag:noun, a1:flower:noun, a1:football:noun, a1:forget:verb, a1:four:number, a1:from:preposition, a1:fun:adjective, a1:gift:noun, a1:glass:noun, a1:good-morning:interjection, a1:guest:noun, a1:guitar:noun, a1:have:have-verb, a1:have-to:modal-auxiliary, a1:he:pronoun, a1:hear:verb, a1:hers:pronoun, a1:hi:interjection, a1:his:pronoun, a1:hobby:noun, a1:hole:noun, a1:hospital:noun, a1:how:adverb, a1:hurt:verb, a1:husband:noun, a1:i:pronoun, a1:ice-cream:noun, a1:if:conjunction, a1:imagine:verb, a1:in:preposition, a1:inside:preposition, a1:into:preposition, a1:it:pronoun, a1:join:verb, a1:juice:noun, a1:key:noun, a1:kick:verb, a1:king:noun, a1:kitchen:noun, a1:knee:noun, a1:knife:noun, a1:laugh:verb, a1:leg:noun, a1:mail:noun, a1:many:determiner, a1:many:pronoun, a1:map:noun, a1:may:modal-auxiliary, a1:me:pronoun, a1:meal:noun, a1:mine:pronoun, a1:miss:noun, a1:more:determiner, a1:more:pronoun, a1:much:determiner, a1:much:pronoun, a1:musician:noun, a1:must:modal-auxiliary, a1:my:determiner, a1:near:preposition, a1:need:modal-auxiliary, a1:night:noun, a1:no:determiner, a1:nothing:pronoun, a1:ok:adjective, a1:on:preposition, a1:one:determiner, a1:other:determiner, a1:our:determiner, a1:ours:pronoun, a1:over:preposition, a1:paper:noun, a1:paragraph:noun, a1:peace:noun, a1:pet:noun, a1:phone:verb, a1:piano:noun, a1:picnic:noun, a1:player:noun, a1:pollution:noun, a1:rabbit:noun, a1:rain:noun, a1:repeat:verb, a1:review:noun, a1:ring:verb, a1:sailor:noun, a1:salad:noun, a1:same:adverb, a1:same:pronoun, a1:save:verb, a1:sell:verb, a1:she:pronoun, a1:shelf:noun, a1:shirt:noun, a1:shoe:noun, a1:shoulder:noun, a1:singer:noun, a1:sit:verb, a1:skill:noun, a1:sky:noun, a1:smile:noun, a1:snow:noun, a1:so:conjunction, a1:sofa:noun, a1:some:determiner, a1:some:pronoun, a1:someone:pronoun, a1:something:pronoun, a1:soup:noun, a1:straight:adverb, a1:student:noun, a1:sunshine:noun, a1:supermarket:noun, a1:swimming-pool:noun, a1:teach:verb, a1:team:noun, a1:than:conjunction, a1:thank:verb, a1:thanks:noun, a1:that:conjunction, a1:that:determiner, a1:the:determiner, a1:them:pronoun, a1:they:pronoun, a1:thirteen:number, a1:this:determiner, a1:this:pronoun, a1:through:preposition, a1:to:infinitive-to, a1:to:preposition, a1:toilet:noun, a1:tomato:noun, a1:towel:noun, a1:tree:noun, a1:truck:noun, a1:twelve:number, a1:under:preposition, a1:until:preposition, a1:up:preposition, a1:us:pronoun, a1:waiter:noun, a1:wash:verb, a1:watch:noun, a1:welcome:interjection, a1:what:determiner, a1:when:adverb, a1:when:conjunction, a1:where:adverb, a1:which:determiner, a1:which:pronoun, a1:whose:determiner, a1:whose:pronoun, a1:why:adverb, a1:will:modal-auxiliary, a1:window:noun, a1:wonderful:adjective, a1:you:pronoun, a1:your:determiner, a1:yours:pronoun, a1:yourself:pronoun, a1:zoo:noun
 
 ## Examples left out as unsuitable
 
 - action: "there were stories of murders and other unnatural actions"
 - after: "We had a few beers after the game."
+- also: "Also common are languages, like Latin, with a three-way distinction (proximal, medial and distal)."
 - bar: "he drowned his sorrows in whiskey at the bar"
 - bottle: "Beer is often sold in bottles."
 - cold: "a cold beer"
@@ -209,6 +210,7 @@ a1:a:determiner, a1:after:preposition, a1:all:determiner, a1:all:pronoun, a1:als
 | greet | verb | no-example |
 | group | noun | no-example |
 | grow | verb | no-example |
+| had | have-verb | no-definition |
 | haircut | noun | no-example |
 | hamburger | noun | no-example |
 | has | have-verb | no-definition |
@@ -245,7 +247,6 @@ a1:a:determiner, a1:after:preposition, a1:all:determiner, a1:all:pronoun, a1:als
 | last name | noun | no-example |
 | leader | noun | no-example |
 | leaf | noun | no-example |
-| leg | noun | no-example |
 | let | verb | no-example |
 | like | preposition | rejected-in-review |
 | lily | noun | no-example |
@@ -425,7 +426,7 @@ a1:a:determiner, a1:after:preposition, a1:all:determiner, a1:all:pronoun, a1:als
 | visit | verb | no-example |
 | volleyball | noun | no-example |
 | waitress | noun | no-example |
-| war | noun | rejected-in-review |
+| war | noun | sensitive |
 | was | be-verb | rejected-in-review |
 | wash | noun | no-example |
 | water | noun | rejected-in-review |

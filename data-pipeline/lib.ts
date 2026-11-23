@@ -189,6 +189,7 @@ const EXCLUDED_EXAMPLES = new Set([
   'the woman kept house while the man hunted',
   'smoking stinks',
   'This man killed several people when he tried to rob a bank',
+  'Also common are languages, like Latin, with a three-way distinction (proximal, medial and distal).', // grammar jargon
 ]);
 
 /**

@@ -113,6 +113,7 @@ describe('primaryWiktSense', () => {
       [
         '===Noun===',
         '# {{lb|en|obsolete|legal}} A plaintiff.',
+        '# {{lb|en|general}} Any game played on foot.',
         '# {{lb|en|informal}} Someone who takes part.',
         '===Article===',
         '# Used before a noun.',
@@ -140,7 +141,8 @@ describe('isSentence', () => {
     ['no contest', false],
     ['Hi!', false],
     ['We should buy a house. ~ With whose money?', false],
-    [`${'Word '.repeat(20)}end.`, false],
+    [`${'Word '.repeat(22)}end.`, false],
+    ['For whose benefit are you acting.?', false],
   ])('isSentence(%s) = %s', (text, expected) => {
     expect(isSentence(text)).toBe(expected);
   });
@@ -180,6 +182,7 @@ describe('isFormOnly', () => {
     ['Plural of that', true],
     ['Past tense of will; usually followed by a bare infinitive.', true],
     ['Superlative of much.', true],
+    ['Used to form the past perfect tense.', true],
     ['Initialism of compact disc.', false],
     ['A form of address for a woman.', false],
   ])('isFormOnly(%s) = %s', (text, expected) => {

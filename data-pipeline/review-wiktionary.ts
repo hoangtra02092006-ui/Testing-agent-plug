@@ -46,5 +46,5 @@ export const REJECTED_WIKTIONARY: Record<string, string> = {
   'where|conjunction': '"whereas" sense',
   'who|pronoun': 'fragment example with an interrobang',
   'with|preposition': '"against" sense, not the common "together with"',
-  'would|modal auxiliary': 'technical grammar definition (future in the past)',
+  'would|modal auxiliary': 'habitual "used to" sense, not the common conditional',
 };

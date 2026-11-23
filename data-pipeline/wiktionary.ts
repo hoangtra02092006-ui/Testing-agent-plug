@@ -64,6 +64,8 @@ const SKIPPED_LABELS = new Set([
   'nautical',
   'military',
   'obsolete outside dialects',
+  // A catch-all sense ("football" as any foot sport) is rarely the one a learner means.
+  'general',
 ]);
 
 /** Templates whose first positional value is the visible text. */
@@ -178,7 +180,7 @@ function labelsOf(line: string): string[] {
 }
 
 /** Longer examples are hard to read on a flashcard. */
-export const MAX_EXAMPLE_WORDS = 20;
+export const MAX_EXAMPLE_WORDS = 22;
 
 /**
  * Definitions that only name a grammatical form ("Inflection of be", "Plural of that") give the
@@ -187,8 +189,11 @@ export const MAX_EXAMPLE_WORDS = 20;
 const FORM_OF =
   /^(?:inflection|plural|past tense|past participle|present participle|simple past|superlative|comparative|third-person singular[\w ]*|form|alternative form|alternative spelling|obsolete form|archaic form|nonstandard form) of\b/i;
 
+/** Grammar-book definitions ("Used to form the past perfect tense") also give no meaning. */
+const GRAMMAR_ONLY = /^used to form\b/i;
+
 export function isFormOnly(definition: string): boolean {
-  return FORM_OF.test(definition);
+  return FORM_OF.test(definition) || GRAMMAR_ONLY.test(definition);
 }
 
 /** A learner example must be a full sentence, not a phrase such as "College of Engineering". */
@@ -199,7 +204,8 @@ export function isSentence(text: string): boolean {
     /[.!?]["”’)]?$/.test(text) &&
     words >= 3 &&
     words <= MAX_EXAMPLE_WORDS &&
-    !text.includes('~')
+    !text.includes('~') &&
+    !/[.!?]{2,}["”’)]?$/.test(text)
   );
 }
 
